@@ -1,0 +1,28 @@
+
+.slider-wrapper{
+  margin-top:  8px;
+  margin-bottom:  8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  width: 80%
+}
+
+.political-name{
+  flex:1;
+}
+
+.slider-title{
+text-align: center;
+}
+
+
+.slider-complete{
+  display: flex;
+  flex-direction: column;
+  flex:1;
+  justify-content: center;
+  align-items: center;
+  
+}

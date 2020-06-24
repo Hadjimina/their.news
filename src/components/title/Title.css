@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
+
+.title{
+  font-family: 'Playfair Display', serif;
+  font-size: 3.5rem;
+  text-align: center;
+  flex:3;
+}
+
+.title-wrapper{
+  display: flex;
+  flex-direction: row;
+}
+
+.clock{
+  flex:1;
+  align-self: flex-end;
+}
+
+.title-complete{
+  flex:1;
+}
+
+.title-hr{
+  opacity: 50%
+}
