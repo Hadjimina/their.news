@@ -6,19 +6,17 @@ body {
 }
 
 .App {
-  display: flex;
-  flex-direction: row;
+
+
 }
 
 .Main{
   display: flex;
   flex-direction: column;
-  flex:2;
+  margin: auto;
+  height: 100%;
 }
 
-.Padding {
-  flex: 1
-}
 
 .Header{
 flex:1;
@@ -27,4 +25,7 @@ flex:1;
 .Content {
   margin-top: 8px;
   flex: 2;
+  display: flex;
+  flex-direction: column;
+
 }
