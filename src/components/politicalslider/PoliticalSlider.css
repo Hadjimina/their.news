@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
 
 .slider-wrapper{
   margin-top:  8px;
@@ -14,9 +15,13 @@
 }
 
 .slider-title{
-text-align: center;
-}
+  text-align: center;
+  margin-bottom:  24px;
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 200;
 
+}
 
 .slider-complete{
   display: flex;
@@ -24,5 +29,19 @@ text-align: center;
   flex:1;
   justify-content: center;
   align-items: center;
-  
+}
+
+.verticalLine{
+  border-left: 3px solid black;
+  height: 20px;
+  margin-top: -30px;
+  position: absolute;
+  padding-left: 450px;
+}
+
+.politicalBiasLabel{
+  position: absolute;
+  padding-right: 450px;
+  margin-top: -70px;
+  z-index: 50
 }

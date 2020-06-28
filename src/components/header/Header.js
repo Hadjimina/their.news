@@ -4,8 +4,6 @@ import Searchbar from "../searchbar/Searchbar"
 import Title from "../title/Title"
 import PoliticalSlider from "../politicalslider/PoliticalSlider"
 
-import Clock from 'react-live-clock';
-
 class Header extends React.Component{
   state = {
     currentTime : new Date().toLocaleString(),

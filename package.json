@@ -14,7 +14,8 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-live-clock": "^4.0.5",
-    "react-scripts": "3.4.1"
+    "react-scripts": "3.4.1",
+    "styled-by": "^0.3.0"
   },
   "scripts": {
     "start": "react-scripts start",

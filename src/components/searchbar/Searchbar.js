@@ -1,7 +1,6 @@
 import React from 'react';
 import "./Searchbar.css";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHome } from "@fortawesome/free-solid-svg-icons";
+
 
 class Searchbar extends React.Component{
   constructor(props) {
@@ -19,9 +18,10 @@ class Searchbar extends React.Component{
         return (
 
           <div class="search-wrapper">
-            <div class="input-icon-wrap">
-              <span class="input-icon"><span className="fa fa-search "/></span>
-              <input type="text" class="input-with-icon" id="form-name" value={this.state.search} onChange={this.handleChange}  />
+          <div class="search-title"> Challenge my Opinion about </div>
+            <div class="search-icon-wrap">
+              <span class="search-icon"><span className="fa fa-search "/></span>
+              <input type="text" class="search-with-icon" id="form-name" value={this.state.search} onChange={this.handleChange}  />
             </div>
 
           </div>
