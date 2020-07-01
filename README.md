@@ -1,6 +1,6 @@
 # Perspecitve (WIP)
 
-##Goal
+## Goal
 The Goal of this project is to build a website where you can find news that challenge your existing biases and believes in order for everyone to break out of their news bubble and in the end to foster understanding of opposing political views.
 
 ## Website
@@ -9,6 +9,9 @@ These articles can be searched and you can freely choose if you want to see news
 The media bias chart found from [adfontesmedia](https://www.adfontesmedia.com/download-the-media-bias-chart/) will be used to categorise the different websites. Afterwards, I will do my best to categorise otherwise that are not found in this chart, myself.
 
 ![](mediaChart.png)
+
+RSS Links:
+https://www.uen.org/feeds/lists.shtml
 
 ### Todo:
 - Integrate RSS feeds

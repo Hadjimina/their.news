@@ -57,7 +57,7 @@ var PrettoSlider = withStyles({
   active: {},
   valueLabel: {
     left: 'calc(-50% + 4px)',
-    circle:{width:300},
+
   },
   track: {
     height: 8,
@@ -69,7 +69,7 @@ var PrettoSlider = withStyles({
     height: 8,
     borderRadius: 4,
   },
-  circle:{width:100}
+
 
 })(Slider);
 

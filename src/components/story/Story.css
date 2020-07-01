@@ -3,6 +3,7 @@
 
 .story-wrapper{
   margin:8px;
+  cursor: pointer;
 }
 
 .story-image{
