@@ -23,7 +23,6 @@ https://www.uen.org/feeds/lists.shtml
   - Fox news
   - CNSNEWS.com
 - Make slider actually do something
-- Add bias "quiz" intiall based on personal news sources
 - Make availble in US & CH
 
 ### Smaller Todos
