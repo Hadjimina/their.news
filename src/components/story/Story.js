@@ -43,7 +43,11 @@ class Story extends React.Component{
           }
 
 
-            <div class="story-title" style={{fontSize:this.state.fontSize}}>
+            <div class="story-title"
+              style={{
+                fontSize:this.state.fontSize,
+                lineHeight: (20+this.props.size*4)+"px",
+                maxHeight: ((20+this.props.size*4)*2)+"px" }}>
               {this.props.data.title}
 
             </div>

@@ -5,6 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 const sliderMax = 3
 const step = 0.025
+const biasDivisor = 0.07
 
 
 const marks = [
@@ -86,14 +87,19 @@ class PoliticalSlider extends React.Component{
 
   constructor(props) {
      super(props);
+
      this.state = {
        sliderVal:0,
        politicalBias:2,
-       color: colorGradient[Math.round(colorGradient.length/2)]
+       color: colorGradient[Math.round(colorGradient.length/2)],
+       newsRange:this.getNewsRange(0)
      };
      this.politicalBias = 0
    }
 
+   getNewsRange(sliderVal){
+      return [(sliderVal-0.25)/biasDivisor,(sliderVal+0.25)/biasDivisor]
+   }
 
    handleChange(e,value) {
       //Color
@@ -105,7 +111,7 @@ class PoliticalSlider extends React.Component{
       }
 
       this.setState({sliderVal: value,
-      color: colorGradient[colorIndex] })
+      color: colorGradient[colorIndex],newsRange:this.getNewsRange(value) })
 
   };
 
@@ -124,7 +130,7 @@ class PoliticalSlider extends React.Component{
 
             <PrettoSlider
               value={this.state.sliderVal}
-              valueLabelDisplay="auto"
+              valueLabelDisplay="off"
               aria-labelledby="discrete-slider-small-steps"
               defaultValue={0}
               min={-sliderMax}

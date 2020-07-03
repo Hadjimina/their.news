@@ -9,12 +9,17 @@ class Header extends React.Component{
     currentTime : new Date().toLocaleString(),
   }
 
+  handleChange(keyword){
+    this.props.onSearchChange(keyword)
+  }
+
+
     render() {
         return (
             <header>
               <Title/>
               <PoliticalSlider/>
-              <Searchbar/>
+              {false ? <Searchbar onSearchChange={this.handleChange.bind(this)}/>: <div/>}              
             </header>
         )
     }

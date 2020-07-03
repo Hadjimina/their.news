@@ -34,12 +34,14 @@
   border: none;
   flex: 1;
   margin-right: 20px;
-
+  margin-left: 8px;
+  height: 36px;
+  font-size: 24px;
 }
 
 .search-icon, .input-with-icon {
   padding-left: 20px;
-
+  font-size: 24px;
 }
 
 .search-icon-wrap:hover {

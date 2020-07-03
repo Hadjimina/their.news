@@ -24,7 +24,7 @@ flex:1;
 
 .Content {
   margin-top: 8px;
-  flex: 2;
+  flex: 4;
   display: flex;
   flex-direction: column;
 
