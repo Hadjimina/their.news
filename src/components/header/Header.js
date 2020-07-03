@@ -5,8 +5,11 @@ import Title from "../title/Title"
 import PoliticalSlider from "../politicalslider/PoliticalSlider"
 
 class Header extends React.Component{
-  state = {
-    currentTime : new Date().toLocaleString(),
+  constructor(props) {
+     super(props);
+     this.state = {
+       currentTime : new Date().toLocaleString(),
+     }
   }
 
   handleChange(keyword){
@@ -18,8 +21,8 @@ class Header extends React.Component{
         return (
             <header>
               <Title/>
-              <PoliticalSlider/>
-              {false ? <Searchbar onSearchChange={this.handleChange.bind(this)}/>: <div/>}              
+              <PoliticalSlider bias={this.props.bias}/>
+              {false ? <Searchbar onSearchChange={this.handleChange.bind(this)}/>: <div/>}
             </header>
         )
     }

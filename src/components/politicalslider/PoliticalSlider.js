@@ -53,7 +53,7 @@ var PrettoSlider = withStyles({
     '&:focus, &:hover, &$active': {
       boxShadow: 'inherit',
     },
-    zIndex:100
+    zIndex:1
   },
   active: {},
   valueLabel: {
@@ -90,11 +90,11 @@ class PoliticalSlider extends React.Component{
 
      this.state = {
        sliderVal:0,
-       politicalBias:2,
+       politicalBias:this.props.bias.reduce((a,b)=>{return a + b.bias;}, 0)/this.props.bias.length,
        color: colorGradient[Math.round(colorGradient.length/2)],
        newsRange:this.getNewsRange(0)
      };
-     this.politicalBias = 0
+
    }
 
    getNewsRange(sliderVal){
@@ -143,7 +143,7 @@ class PoliticalSlider extends React.Component{
               style={{color:this.state.color}}
               />
 
-              <div class= "verticalLine" style={{marginLeft:this.politicalBias}}></div>
+              <div class= "verticalLine" style={{marginLeft:this.state.politicalBias}}></div>
               <div class="politicalBiasLabel"> Your Bias </div>
             {/*<input type="range" min="-10" max="10" value={this.state.value} onChange={this.handleChange} class="slider" id="political-range"/>*/}
           </div>

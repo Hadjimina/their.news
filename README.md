@@ -14,10 +14,17 @@ RSS Links:
 https://www.uen.org/feeds/lists.shtml
 
 ### Todo:
-- Integrate RSS feeds
-- 3 Different news article views
 - Searchable
-- left <=> right leaning scale
+- add Sources:
+  - MSNBC
+  - Washington monthly
+  - Busniess insider
+  - Washington times
+  - Fox news
+  - CNSNEWS.com
+- Make slider actually do something
+- Add bias "quiz" intiall based on personal news sources
+- Make availble in US & CH
 
 ### Smaller Todos
 - correct shrinking of bars left & right

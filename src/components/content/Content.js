@@ -16,8 +16,6 @@ class Content extends React.Component{
      }
    }
 
-
-
    async componentDidMount(){
      //Keyword search disabled
      var storyArray = await this.getStoriesContent("")
@@ -37,7 +35,7 @@ class Content extends React.Component{
       // Object.keys(Constants.RSS).forEach(async (rssKey, i) => {
 
         //var currentRss = Constants.RSS[rssKey]
-        var currentRss = Constants.RSS.reuters
+        var currentRss = Constants.RSS.reuters.feed
 
         let feed = await parser.parseURL(CORS_PROXY + currentRss.feedLink);
 
@@ -46,16 +44,18 @@ class Content extends React.Component{
         //  console.log(Object.keys(item));
         /*  console.log(item);*/
 
+
           var story = {title: item[currentRss.title], desc: item[currentRss.desc], link:item[currentRss.link]}
+
           //console.log(story);
 
 
           //Reuters workaround
-          if(currentRss == Constants.RSS.reuters || currentRss == Constants.RSS.dailyKos){
+        //  if(currentRss == Constants.RSS.reuters || currentRss == Constants.RSS.dailyKos){
             var temp = document.createElement("div");
             temp.innerHTML = story.desc;
             story.desc = temp.textContent || temp.innerText;
-          }
+          //}
 
 
           story.score = this.calculateScore(story, keyword);
@@ -90,8 +90,8 @@ class Content extends React.Component{
 
     render() {
 
-      const HorizontalLine = <hr style={{width:"100%", marginLeft:"8px", marginRight:"8px", opacity:"10%"}}/>
-      const VerticalLine = <hr style={{marginTop:"8px", marginBottom:"8px", opacity:"10%"}}/>
+      const HorizontalLine = <hr style={{width:"100%", marginLeft:"8px", marginRight:"8px", color:"black", opacity:"100%"}}/>
+      const VerticalLine = <hr style={{marginTop:"8px", marginBottom:"8px", opacity:"100%", width:"1px",color:"black",}}/>
 
 
         return (this.state.stories.length === 0  ? <div class="lds-ripple"><div></div><div></div></div> :
