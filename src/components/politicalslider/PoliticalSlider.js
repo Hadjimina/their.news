@@ -2,11 +2,10 @@ import React from 'react';
 import "./PoliticalSlider.css";
 import Slider from '@material-ui/core/Slider';
 import { withStyles } from '@material-ui/core/styles';
+import * as Constants from "../../utils/constants"
 
 const sliderMax = 3
 const step = 0.025
-const biasDivisor = 0.07
-
 
 const marks = [
   {
@@ -21,10 +20,10 @@ const marks = [
     value: -0.5,
     label: "Skews Left",
   },
-  {
+  /*{
     value: 0,
     label:   "Neutral",
-  },
+  },*/
   {
     value: 0.5,
     label:   "Skews Right",
@@ -88,51 +87,46 @@ class PoliticalSlider extends React.Component{
   constructor(props) {
      super(props);
 
+     //adfontes bias
+     var politicalBias = this.props.bias.reduce((a,b)=>{return a + b.bias;}, 0)/this.props.bias.length
      this.state = {
-       sliderVal:0,
-       politicalBias:this.props.bias.reduce((a,b)=>{return a + b.bias;}, 0)/this.props.bias.length,
-       color: colorGradient[Math.round(colorGradient.length/2)],
-       newsRange:this.getNewsRange(0)
+       sliderVal:politicalBias*Constants.ADFONTES_TO_PRETTO_FACTOR*-1,
+       politicalBias:politicalBias,
+       color: colorGradient[Math.round(politicalBias*Constants.ADFONTES_TO_PRETTO_FACTOR*-1/step)+120],
      };
 
+    this.props.onSliderChange(this.state.sliderVal)
+
    }
 
-   getNewsRange(sliderVal){
-      return [(sliderVal-0.25)/biasDivisor,(sliderVal+0.25)/biasDivisor]
-   }
-
-   handleChange(e,value) {
-      //Color
-      var colorIndex;
-      if(value >= 0){
-        colorIndex = this.state.sliderVal/step + 120
-      }else {
-        colorIndex = 120 + this.state.sliderVal/step
-      }
-
+   handleChange(value) {
       this.setState({sliderVal: value,
-      color: colorGradient[colorIndex],newsRange:this.getNewsRange(value) })
+      color: colorGradient[Math.round(value/step + 120)]})
+
+      this.props.onSliderChange(value)
 
   };
 
 
-
-
     render() {
-
         return (
 
           <div class="slider-complete" >
 
           <div class="slider-title"> Your Political Compass </div>
 
-          <div class="slider-wrapper">
+          <div class="slider-bias" style={{marginLeft:this.state.politicalBias*Constants.ADFONTES_TO_PERCENTAGE_FACTOR+"%"}}>
+            <div class="politicalBiasLabel"> Your Bias </div>
+            <div class= "verticalLine"></div>
+          </div>
+
+          <div class="slider-wrapper" style={{width:Constants.SLIDER_WRAPPER_WIDTH+"%"}}>
 
             <PrettoSlider
               value={this.state.sliderVal}
               valueLabelDisplay="off"
               aria-labelledby="discrete-slider-small-steps"
-              defaultValue={0}
+
               min={-sliderMax}
               max={sliderMax}
               step={step}
@@ -142,10 +136,6 @@ class PoliticalSlider extends React.Component{
               valueLabelFormat ={"Shown Articles"}
               style={{color:this.state.color}}
               />
-
-              <div class= "verticalLine" style={{marginLeft:this.state.politicalBias}}></div>
-              <div class="politicalBiasLabel"> Your Bias </div>
-            {/*<input type="range" min="-10" max="10" value={this.state.value} onChange={this.handleChange} class="slider" id="political-range"/>*/}
           </div>
           </div>
 

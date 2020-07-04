@@ -3,6 +3,13 @@ export const PAGE_WIDTH_PERCENTAGE = 0.45
 export const TITLE_FONT_SIZES = [18, 22, 28]
 export const DESC_FONT_SIZE = 16
 
+export const SLIDER_MAX = 3
+export const ADFONTES_MAX = 42
+export const SLIDER_WRAPPER_WIDTH = 80
+export const ADFONTES_TO_PERCENTAGE_FACTOR = SLIDER_WRAPPER_WIDTH/ADFONTES_MAX
+export const ADFONTES_TO_PRETTO_FACTOR =SLIDER_MAX/ADFONTES_MAX
+
+export const BIAS_WINDOW_SIZE=1
 export const RSS = {
   reuters: {
     about: {name:"AP Reuters", logo:"https://s3.reutersmedia.net/resources_v2/images/favicon/favicon-96x96.png",bias: -0.95},

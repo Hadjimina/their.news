@@ -7,7 +7,7 @@
   justify-content: center;
   align-items: center;
   flex-direction: row;
-  width: 80%
+
 }
 
 .political-name{
@@ -16,7 +16,7 @@
 
 .slider-title{
   text-align: center;
-  margin-bottom:  24px;
+
   font-family: 'Playfair Display', serif;
   font-size: 32px;
   font-weight: 200;
@@ -32,17 +32,18 @@
 
 }
 
+.slider-bias{
+  position: relative;
+  margin-bottom: -30px;
+  margin-right: -34px;
+}
+
 .verticalLine{
   border-left: 3px solid black;
   height: 20px;
-  margin-top: -30px;
-  position: absolute;
-  padding-left: 450px;
 }
 
 .politicalBiasLabel{
-  position: absolute;
-  padding-right: 450px;
-  margin-top: -70px;
-  /*z-index: 50*/
+  margin-left: -32px;
+  font-weight: bold;
 }

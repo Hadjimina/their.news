@@ -12,8 +12,8 @@ class Header extends React.Component{
      }
   }
 
-  handleChange(keyword){
-    this.props.onSearchChange(keyword)
+  handleSliderChange(value){
+    this.props.onSliderChange(value)
   }
 
 
@@ -21,7 +21,7 @@ class Header extends React.Component{
         return (
             <header>
               <Title/>
-              <PoliticalSlider bias={this.props.bias}/>
+              <PoliticalSlider bias={this.props.bias} onSliderChange={this.handleSliderChange.bind(this)}/>
               {false ? <Searchbar onSearchChange={this.handleChange.bind(this)}/>: <div/>}
             </header>
         )

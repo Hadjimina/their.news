@@ -12,50 +12,96 @@ class Content extends React.Component{
      this.state = {
        currentTime : new Date().toLocaleString(),
        searchKeyword:this.props.searchKeyword,
-       stories: []
+       stories: [],
+       sliderVal:this.props.sliderVal,
      }
    }
 
+   getSitesfromSliderValue(value){
+     var sitesFromValue = {}
+     var minIndex, minDistance;
+     //get sites with +_0.5
+     Object.keys(Constants.RSS).map((site, index)=>{
+       var currentSite = Constants.RSS[site]
+       var distance = Math.abs(currentSite.about.bias-value/Constants.ADFONTES_TO_PRETTO_FACTOR )
+
+       if((value-Constants.BIAS_WINDOW_SIZE/2)/Constants.ADFONTES_TO_PRETTO_FACTOR <= currentSite.about.bias
+            && currentSite.about.bias <= (value+Constants.BIAS_WINDOW_SIZE/2)/Constants.ADFONTES_TO_PRETTO_FACTOR){
+         sitesFromValue[site] = currentSite
+       }else if(minDistance == null || distance < minDistance){
+         minIndex = index
+         minDistance = distance
+       }
+     })
+
+     if(Object.keys(sitesFromValue).length == 0){
+       var minDistanceSite = Object.keys(Constants.RSS)[minIndex];
+       sitesFromValue[minDistanceSite] = Constants.RSS[minDistanceSite]
+     }
+
+     return sitesFromValue
+   }
+
    async componentDidMount(){
-     //Keyword search disabled
-     var storyArray = await this.getStoriesContent("")
+
+     var sites = this.getSitesfromSliderValue(this.props.sliderVal)
+     var storyArray = await this.getStoriesContent("",sites)
      this.setState({stories:storyArray})
    }
 
 
-   async getStoriesContent(keyword){
+   async getStoriesContent(keyword,sites){
      let parser = new Parser();
      const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
 
      var storyArray = []
      var minScore = 0;
 
-    await (async (evt, callback) => {
+     console.log(Object.keys(sites));
+     for (var site in sites) {
 
-      // Object.keys(Constants.RSS).forEach(async (rssKey, i) => {
+          var currentRss = sites[site].feed
+          let feed = await parser.parseURL(CORS_PROXY + currentRss.feedLink);
+          for (var item of feed.items) {
 
-        //var currentRss = Constants.RSS[rssKey]
-        var currentRss = Constants.RSS.reuters.feed
+          var story = {title: item[currentRss.title], desc: item[currentRss.desc], link:item[currentRss.link]}
+          
+          //Remove HTML
+          var temp = document.createElement("div");
+          temp.innerHTML = story.desc;
+          story.desc = temp.textContent || temp.innerText;
 
+          story.score = this.calculateScore(story, keyword);
+          if(story.score >= minScore){
+
+            storyArray.push(story)
+            if(storyArray.length >= 11){
+              storyArray.sort((a, b) => a.score < b.score);
+              storyArray.splice(storyArray.length-1, 1);
+            }
+
+          }
+        }
+     }
+    /* await (async (evt, callback) => {
+
+      Object.keys(sites).forEach(async (rssKey, i) => {
+
+        var currentRss = sites[rssKey].feed
+
+        console.log(currentRss);
         let feed = await parser.parseURL(CORS_PROXY + currentRss.feedLink);
 
         for(let item of feed.items)
         {
         //  console.log(Object.keys(item));
-        /*  console.log(item);*/
-
+          console.log(item);
 
           var story = {title: item[currentRss.title], desc: item[currentRss.desc], link:item[currentRss.link]}
 
-          //console.log(story);
-
-
-          //Reuters workaround
-        //  if(currentRss == Constants.RSS.reuters || currentRss == Constants.RSS.dailyKos){
             var temp = document.createElement("div");
             temp.innerHTML = story.desc;
             story.desc = temp.textContent || temp.innerText;
-          //}
 
 
           story.score = this.calculateScore(story, keyword);
@@ -68,9 +114,9 @@ class Content extends React.Component{
             }
           }
 
-      //  });
       }
-     })();
+      })
+    });*/
 
      return(storyArray)
 
@@ -96,7 +142,6 @@ class Content extends React.Component{
 
         return (this.state.stories.length === 0  ? <div class="lds-ripple"><div></div><div></div></div> :
             <div class="content-wrapper">
-
 
             <div class="content-row-0">
               <div class="content-row-0-main">

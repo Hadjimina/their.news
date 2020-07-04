@@ -13,9 +13,9 @@ class App extends React.Component {
   constructor(props) {
      super(props);
      this.state = {
-       searchKeyword: "",
        selectedSites:[],
-       biasSelected:false
+       biasSelected:false,
+       sliderVal:0
      }
 
      //Setup sites to select
@@ -27,10 +27,6 @@ class App extends React.Component {
      this.newsSites = Helpers.fisherYates(arr);
 
    }
-
-  handleChange(keyword){
-    this.setState=({searchKeyword:keyword})
-  }
 
   siteSelection(id){
     var currentSelection = this.state.selectedSites
@@ -49,9 +45,13 @@ class App extends React.Component {
     this.setState({selectedSites:currentSelection})
   }
 
+  handleSliderChange(value){
+    this.setState({sliderVal: value})
+  }
+
   render(){
     var widthStyle={width: window.screen.width*Constants.PAGE_WIDTH_PERCENTAGE}
-  
+
     return (
       <div class="App">
 
@@ -79,12 +79,12 @@ class App extends React.Component {
             {this.state.biasSelected  &&
             <div>
               <div class="Header">
-                <Header onSearchChange={this.handleChange.bind(this)} bias={this.state.selectedSites}/>
+                <Header onSliderChange={this.handleSliderChange.bind(this)} bias={this.state.selectedSites}/>
                 <hr/>
               </div>
 
               <div class="Content">
-                <Content searchKeyword={this.state.searchKeyword}/>
+                <Content sliderVal={this.state.sliderVal}/>
               </div>
             </div>}
           </div>
@@ -96,4 +96,3 @@ class App extends React.Component {
 
 
 export default App;
-//
