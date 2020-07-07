@@ -3,10 +3,10 @@ import "./BiasListElement.css";
 
 
 class BiasListElement extends React.Component{
-  constructor(props) {
+/*  constructor(props) {
      super(props);
 
-   }
+   }*/
 
    onClick(){
      this.props.onClick(this.props.id)
@@ -17,7 +17,7 @@ class BiasListElement extends React.Component{
           <div class="BiasListElement-wrapper" onClick={this.onClick.bind(this)}>
             <div class="newsIcon"><img alt={this.props.site.name+" logo"}src={this.props.site.logo} height="30"/></div>
             <div class="newsName">{this.props.site.name}</div>
-            <div class="newsRadio"><input type="radio"  checked={this.props.checked}/></div>
+            <div class="newsRadio"><input type="radio"  onChange={()=>{}}checked={this.props.checked}/></div>
 
           </div>
 

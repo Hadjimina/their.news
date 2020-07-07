@@ -99,13 +99,14 @@ class PoliticalSlider extends React.Component{
 
    }
 
-   handleChange(value) {
+   handleChange(e,value) {
       this.setState({sliderVal: value,
       color: colorGradient[Math.round(value/step + 120)]})
-
-      this.props.onSliderChange(value)
-
   };
+
+  propagateChange(){
+    this.props.onSliderChange(this.state.sliderVal)
+  }
 
 
     render() {
@@ -131,6 +132,7 @@ class PoliticalSlider extends React.Component{
               max={sliderMax}
               step={step}
               onChange={this.handleChange.bind(this)}
+              onChangeCommitted={this.propagateChange.bind(this)}
               marks={marks}
               track={false}
               valueLabelFormat ={"Shown Articles"}

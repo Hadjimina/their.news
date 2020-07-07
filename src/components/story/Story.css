@@ -4,10 +4,12 @@
 .story-wrapper{
   margin:8px;
   cursor: pointer;
+  display: flex;
+
 }
 
 .story-image{
-
+  flex:1;
 }
 
 .story-title{
@@ -18,6 +20,7 @@
   display: -webkit-box;
   -webkit-line-clamp: 2; /* number of lines to show */
   -webkit-box-orient: vertical;
+
 }
 
 .story-desc{
@@ -28,4 +31,18 @@
   max-height: 80px;      /* fallback */
   -webkit-line-clamp: 4; /* number of lines to show */
   -webkit-box-orient: vertical;
+
+}
+
+.story-site-tag{
+  float: right;
+}
+
+.story-site-tag-href{
+  color: grey;
+  font-style: italic;
+}
+
+.story-content-wrapper{
+  flex:1;
 }

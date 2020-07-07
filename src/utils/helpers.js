@@ -1,5 +1,19 @@
-module.exports = {
-   occurrences(string, subString, allowOverlapping) {
+import Parser from "rss-parser"
+import * as Constants from "../utils/constants"
+
+function calculateScore(story, keyword){
+  if(keyword == ""){
+    return Math.floor(Math.random() * 1000);
+  }
+
+  /*var titleOccurences = Helpers.occurrences(story.title.toLowerCase(), keyword.toLowerCase(),true)
+  var descOccurences = Helpers.occurrences(story.desc.toLowerCase(), keyword.toLowerCase(),true)
+
+  return titleOccurences*2+descOccurences;*/
+}
+
+const helpers = {
+  /* occurrences(string, subString, allowOverlapping) {
 
       string += "";
       subString += "";
@@ -17,7 +31,7 @@ module.exports = {
           } else break;
       }
       return n;
-  },
+  },*/
   fisherYates( array ){
     var count = array.length, randomnumber, temp;
     while( count ){
@@ -27,5 +41,51 @@ module.exports = {
       array[randomnumber] = temp
     }
     return array
+  },
+
+  async getStoriesContent(keyword,sites){
+    console.log("started");
+    let parser = new Parser();
+    const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
+
+    var minScore = 0;
+
+    for (var site in sites) {
+         if(localStorage.getItem(site+Constants.STORAGE_SITE_SUFFIX)){
+           continue;
+         }
+
+         var storyArray = []
+         console.log(site);
+
+         var currentRss = sites[site].feed
+         let feed = await parser.parseURL(CORS_PROXY + currentRss.feedLink);
+         for (var item of feed.items) {
+
+
+           var story = {title: item[currentRss.title], desc: item[currentRss.desc], link:item[currentRss.link],
+                         site:{name:Constants.RSS[site].about.name, link:Constants.RSS[site].about.link}}
+           console.log("   "+story.title);
+           //Remove HTML
+           var temp = document.createElement("div");
+           temp.innerHTML = story.desc;
+           story.desc = temp.textContent || temp.innerText;
+
+           story.score = calculateScore(story, keyword);
+           if(story.score >= minScore){
+
+             storyArray.push(story)
+
+             if(storyArray.length >= 11){
+               storyArray.sort((a, b) => a.score < b.score);
+               storyArray.splice(storyArray.length-1, 1);
+             }
+
+           }
+       }
+       localStorage.setItem(site+Constants.STORAGE_SITE_SUFFIX,storyArray)
+    }
+    console.log("Done");
   }
 }
+export default helpers;

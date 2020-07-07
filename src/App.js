@@ -47,6 +47,7 @@ class App extends React.Component {
 
   handleSliderChange(value){
     this.setState({sliderVal: value})
+  
   }
 
   render(){
@@ -70,7 +71,7 @@ class App extends React.Component {
                   {this.newsSites.map((item,index) =>
                     <BiasListElement site={item} id={index} checked={this.state.selectedSites.indexOf(this.newsSites[index])>=0} onClick={this.siteSelection.bind(this)}/>
                   )}
-                  <Button variant="secondary" disabled={this.state.selectedSites.length==0} onClick={()=>{this.setState({biasSelected:true})}}>Next</Button>
+                  <Button variant="secondary" disabled={this.state.selectedSites.length===0} onClick={()=>{this.setState({biasSelected:true})}}>Next</Button>
                 </div>
                 </div>
               </div>
