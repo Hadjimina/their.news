@@ -1,16 +1,7 @@
 import Parser from "rss-parser"
 import * as Constants from "../utils/constants"
 
-function calculateScore(story, keyword){
-  if(keyword == ""){
-    return Math.floor(Math.random() * 1000);
-  }
 
-  /*var titleOccurences = Helpers.occurrences(story.title.toLowerCase(), keyword.toLowerCase(),true)
-  var descOccurences = Helpers.occurrences(story.desc.toLowerCase(), keyword.toLowerCase(),true)
-
-  return titleOccurences*2+descOccurences;*/
-}
 
 const helpers = {
   /* occurrences(string, subString, allowOverlapping) {
@@ -43,7 +34,9 @@ const helpers = {
     return array
   },
 
-  async getStoriesContent(keyword,sites){
+
+
+  async OLDgetStoriesContent(keyword,sites, value){
     console.log("started");
     let parser = new Parser();
     const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
@@ -71,7 +64,7 @@ const helpers = {
            temp.innerHTML = story.desc;
            story.desc = temp.textContent || temp.innerText;
 
-           story.score = calculateScore(story, keyword);
+           story.score = Math.floor(Math.random() * 1000);
            if(story.score >= minScore){
 
              storyArray.push(story)

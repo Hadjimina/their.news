@@ -11,6 +11,9 @@ import Button from 'react-bootstrap/Button';
 
 class App extends React.Component {
   constructor(props) {
+    //Fresh news
+    localStorage.clear();
+
      super(props);
      this.state = {
        selectedSites:[],
@@ -47,7 +50,7 @@ class App extends React.Component {
 
   handleSliderChange(value){
     this.setState({sliderVal: value})
-  
+
   }
 
   render(){

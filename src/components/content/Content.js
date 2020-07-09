@@ -4,68 +4,117 @@ import Story from "../story/Story"
 import Parser from "rss-parser"
 import * as Constants from "../../utils/constants"
 import Helpers from "../../utils/helpers"
+import worker_script from '../../utils/worker';
+
 
 class Content extends React.Component{
 
-  constructor(props) {
+constructor(props) {
      super(props);
      this.stories = []
      this.state = {
        currentTime : new Date().toLocaleString(),
        searchKeyword:this.props.searchKeyword,
        sliderVal:this.props.sliderVal,
+       stories:[]
      }
    }
+
+   async componentDidMount(){
+      //var sites = this.getSitesfromSliderValue(this.props.sliderVal)
+      var sites = Object.keys(Constants.RSS)
+      sites.map((site,index)=>{
+          this.getStoryContent(site)
+      })
+
+   }
+
+   getDisplayStories(sliderVal){
+     //Full refresh
+     var storiesToShow = []
+     var sitesWithDistance = this.getSitesfromSliderValue(sliderVal)
+
+     var concatFlag = false
+     for (var site of sitesWithDistance) {
+       var distance = site[0]
+       if(distance <= Constants.BIAS_WINDOW_SIZE ){
+
+        var gotten = localStorage.getItem(site[1]+Constants.STORAGE_SITE_SUFFIX)
+        if(gotten != null){
+            concatFlag = true;
+            storiesToShow = storiesToShow.concat(JSON.parse(gotten))
+        }
+       }
+     }
+
+     if(!concatFlag){
+       return []
+     }
+     storiesToShow = storiesToShow.sort((a, b) => a.score - b.score).slice(0,10)
+
+     return storiesToShow
+   }
+
 
   async componentDidUpdate(nextProps) {
-     console.log("update");
-     var sites = this.getSitesfromSliderValue(this.props.sliderVal)
-     var storyArray = await Helpers.getStoriesContent("",sites)
-     this.stories = storyArray
+    console.log("nextSliderVal");
+    console.log(nextProps.sliderVal);
+    //this.setDisplayStories(nextProps.sliderVal)
   }
 
-   getSitesfromSliderValue(value){
-     var sitesFromValue = {}
-     var minIndex, minDistance;
+  async getStoryContent(site){
+    var gotten = localStorage.getItem(site+Constants.STORAGE_SITE_SUFFIX)
+    if(gotten){
+      //  this.setDisplayStories(this.state.sliderVal)
+      return
+    }
 
-     //get sites with +_0.5
-     Object.keys(Constants.RSS).map((site, index)=>{
-       var currentSite = Constants.RSS[site]
-       var distance = Math.abs(currentSite.about.bias-value/Constants.ADFONTES_TO_PRETTO_FACTOR )
+    let parser = new Parser();
+    const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
+    var storyArray = []
+    var minScore = 0;
 
-       //apply bias window
-       if((value-Constants.BIAS_WINDOW_SIZE/2)/Constants.ADFONTES_TO_PRETTO_FACTOR <= currentSite.about.bias
-            && currentSite.about.bias <= (value+Constants.BIAS_WINDOW_SIZE/2)/Constants.ADFONTES_TO_PRETTO_FACTOR){
-         sitesFromValue[site] = currentSite
+    var currentRss = Constants.RSS[site].feed
+    let feed = await parser.parseURL(CORS_PROXY + currentRss.feedLink);
+    for (var item of feed.items) {
 
-       }else if(minDistance == null || distance < minDistance){
-         minIndex = index
-         minDistance = distance
-       }
+        var story = {title: item[currentRss.title], desc: item[currentRss.desc], link:item[currentRss.link],
+                      site:{name:Constants.RSS[site].about.name, link:Constants.RSS[site].about.link}}
+
+        //Remove HTML
+        var temp = document.createElement("div");
+        temp.innerHTML = story.desc;
+        story.desc = temp.textContent || temp.innerText;
+
+        story.score = Math.floor(Math.random() * 1000);
+        storyArray.push(story)
+    }
+    localStorage.setItem(site+Constants.STORAGE_SITE_SUFFIX,JSON.stringify(storyArray))
+    //this.setDisplayStories(this.state.sliderVal)
+  }
+
+  getSitesfromSliderValue(value){
+     var RSSbyDistance = []
+
+     Object.keys(Constants.RSS).map((site, index )=>{
+       RSSbyDistance.push([Math.abs(Constants.RSS[site].about.bias-value), Object.keys(Constants.RSS)[index]])
      })
+     //RSSbyDistance.sort((a,b)=>(a[0]>b[0])? 1:-1)
 
-     //get min distance if no element in bias window
-     if(Object.keys(sitesFromValue).length == 0){
-       var minDistanceSite = Object.keys(Constants.RSS)[minIndex];
-       sitesFromValue[minDistanceSite] = Constants.RSS[minDistanceSite]
-     }
-
-     return sitesFromValue
+     return RSSbyDistance
    }
 
-
-
-
-
-
-    render() {
+  render() {
 
       const HorizontalLine = <hr style={{width:"100%", marginLeft:"8px", marginRight:"8px", color:"black", opacity:"100%"}}/>
       const VerticalLine = <hr style={{marginTop:"8px", marginBottom:"8px", opacity:"100%", width:"1px",color:"black",}}/>
 
 
 
-        return (this.stories.length === 0  ? <div class="lds-ripple"><div></div><div></div></div> :
+      this.stories = this.getDisplayStories(this.props.sliderVal)
+      console.log(this.stories);
+
+      return (this.stories.length === 0  ? <div class="lds-ripple"><div></div><div></div></div> :
             <div class="content-wrapper">
 
             <div class="content-row-0">

@@ -6,7 +6,7 @@ class Story extends React.Component{
   constructor(props) {
      super(props);
      this.state = {bias: 3, value:0, fontSize: Constants.TITLE_FONT_SIZES[this.props.size], imageURL: ""};
-    
+    console.log(this.props.story);
    }
 
    async componentDidMount(){
