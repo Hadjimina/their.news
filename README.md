@@ -9,7 +9,7 @@ The Goal of this project is to build a website where you can find news that chal
 
 ## Website
 
-###[Accessible here](https://perspectivenews.herokuapp.com/)
+### [Accessible here](https://perspectivenews.herokuapp.com/)
 
 In order to achieve this goal, a website will be built which, first detects roughly your existing political standing and then presents you with news articles from the other side of the spectrum.
 These articles can be searched and you can freely choose if you want to see news from a more politically left or right sided view.
