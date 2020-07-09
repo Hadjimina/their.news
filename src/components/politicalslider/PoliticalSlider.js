@@ -7,36 +7,39 @@ import * as Constants from "../../utils/constants"
 const sliderMax = 3
 const step = 0.025
 
-const marks = [
-  {
-    value: -2.5,
-    label: "Most Extreme Left",
-  },
-  {
-    value: -1.5,
-    label: "Hyper-Partisan Left",
-  },
-  {
-    value: -0.5,
-    label: "Skews Left",
-  },
-  /*{
-    value: 0,
-    label:   "Neutral",
-  },*/
-  {
-    value: 0.5,
-    label:   "Skews Right",
-  },
-  {
-    value: 1.5,
-    label:   "Hyper-Partisan Right",
-  },
-  {
-    value: 2.5,
-    label:   "Most Extreme Righ",
-  }
-];
+
+const marks =  Constants.SHOW_SITES_BIAS ?
+  Object.keys(Constants.RSS).map((site, index)=>{return {value:Constants.RSS[site].about.bias*Constants.ADFONTES_TO_PRETTO_FACTOR, label:site}}):
+  [
+    {
+      value: -2.5,
+      label: "Most Extreme Left",
+    },
+    {
+      value: -1.5,
+      label: "Hyper-Partisan Left",
+    },
+    {
+      value: -0.5,
+      label: "Skews Left",
+    },
+    /*{
+      value: 0,
+      label:   "Neutral",
+    },*/
+    {
+      value: 0.5,
+      label:   "Skews Right",
+    },
+    {
+      value: 1.5,
+      label:   "Hyper-Partisan Right",
+    },
+    {
+      value: 2.5,
+      label:   "Most Extreme Righ",
+    }
+  ];
 
 var PrettoSlider = withStyles({
   root: {

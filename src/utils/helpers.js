@@ -44,7 +44,7 @@ const helpers = {
     var minScore = 0;
 
     for (var site in sites) {
-         if(localStorage.getItem(site+Constants.STORAGE_SITE_SUFFIX)){
+         if(sessionStorage.getItem(site+Constants.STORAGE_SITE_SUFFIX)){
            continue;
          }
 
@@ -76,7 +76,7 @@ const helpers = {
 
            }
        }
-       localStorage.setItem(site+Constants.STORAGE_SITE_SUFFIX,storyArray)
+       sessionStorage.setItem(site+Constants.STORAGE_SITE_SUFFIX,storyArray)
     }
     console.log("Done");
   }

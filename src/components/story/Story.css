@@ -27,8 +27,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  line-height: 20px;     /* fallback */
-  max-height: 80px;      /* fallback */
+  line-height: 22px;     /* fallback */
+  max-height: 88px;      /* fallback */
   -webkit-line-clamp: 4; /* number of lines to show */
   -webkit-box-orient: vertical;
 

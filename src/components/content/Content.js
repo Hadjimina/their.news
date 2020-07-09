@@ -4,20 +4,20 @@ import Story from "../story/Story"
 import Parser from "rss-parser"
 import * as Constants from "../../utils/constants"
 import Helpers from "../../utils/helpers"
-import worker_script from '../../utils/worker';
-
 
 class Content extends React.Component{
 
 constructor(props) {
      super(props);
-     this.stories = []
+
      this.state = {
        currentTime : new Date().toLocaleString(),
        searchKeyword:this.props.searchKeyword,
        sliderVal:this.props.sliderVal,
        stories:[]
      }
+
+
    }
 
    async componentDidMount(){
@@ -30,42 +30,52 @@ constructor(props) {
    }
 
    getDisplayStories(sliderVal){
+     //console.log("get display stories");
      //Full refresh
      var storiesToShow = []
      var sitesWithDistance = this.getSitesfromSliderValue(sliderVal)
+     var minDistanceSite = null
+     var minDistance = Number.MAX_VALUE
 
-     var concatFlag = false
+     //Check bias window
      for (var site of sitesWithDistance) {
        var distance = site[0]
-       if(distance <= Constants.BIAS_WINDOW_SIZE ){
+       if(distance < minDistance){
+         minDistance = distance
+         minDistanceSite = site
+       }
 
-        var gotten = localStorage.getItem(site[1]+Constants.STORAGE_SITE_SUFFIX)
+       //console.log(site[1] +" distance "+site[0]+" window "+Constants.BIAS_WINDOW_SIZE/Constants.ADFONTES_TO_PRETTO_FACTOR);
+       if(distance <= Constants.BIAS_WINDOW_SIZE/Constants.ADFONTES_TO_PRETTO_FACTOR  ){
+
+        var gotten = sessionStorage.getItem(site[1]+Constants.STORAGE_SITE_SUFFIX)
         if(gotten != null){
-            concatFlag = true;
             storiesToShow = storiesToShow.concat(JSON.parse(gotten))
         }
        }
      }
 
-     if(!concatFlag){
-       return []
+     //Nothing in window so get closest
+     if(storiesToShow.length == 0){
+       console.log("NOTHING IN WINDOW");
+       var site = minDistanceSite
+       var gotten = sessionStorage.getItem(site[1]+Constants.STORAGE_SITE_SUFFIX)
+
+       if(gotten != null){
+           storiesToShow = storiesToShow.concat(JSON.parse(gotten))
+       }else{
+         return []
+       }
      }
-     storiesToShow = storiesToShow.sort((a, b) => a.score - b.score).slice(0,10)
+     storiesToShow = storiesToShow.sort((a, b) =>  b.score-a.score ).slice(0,10)
 
      return storiesToShow
    }
 
-
-  async componentDidUpdate(nextProps) {
-    console.log("nextSliderVal");
-    console.log(nextProps.sliderVal);
-    //this.setDisplayStories(nextProps.sliderVal)
-  }
-
   async getStoryContent(site){
-    var gotten = localStorage.getItem(site+Constants.STORAGE_SITE_SUFFIX)
+    var gotten = sessionStorage.getItem(site+Constants.STORAGE_SITE_SUFFIX)
     if(gotten){
-      //  this.setDisplayStories(this.state.sliderVal)
+      this.forceUpdate()
       return
     }
 
@@ -86,18 +96,23 @@ constructor(props) {
         temp.innerHTML = story.desc;
         story.desc = temp.textContent || temp.innerText;
 
+
         story.score = Math.floor(Math.random() * 1000);
+
+        if(Constants.SHOW_STORY_SCORE){
+          story.title = story.score +" "+story.title
+        }
         storyArray.push(story)
     }
-    localStorage.setItem(site+Constants.STORAGE_SITE_SUFFIX,JSON.stringify(storyArray))
-    //this.setDisplayStories(this.state.sliderVal)
+    sessionStorage.setItem(site+Constants.STORAGE_SITE_SUFFIX,JSON.stringify(storyArray))
+    this.forceUpdate()
   }
 
   getSitesfromSliderValue(value){
      var RSSbyDistance = []
 
      Object.keys(Constants.RSS).map((site, index )=>{
-       RSSbyDistance.push([Math.abs(Constants.RSS[site].about.bias-value), Object.keys(Constants.RSS)[index]])
+       RSSbyDistance.push([Math.abs(Constants.RSS[site].about.bias-value/Constants.ADFONTES_TO_PRETTO_FACTOR), Object.keys(Constants.RSS)[index]])
      })
      //RSSbyDistance.sort((a,b)=>(a[0]>b[0])? 1:-1)
 
@@ -107,76 +122,74 @@ constructor(props) {
   render() {
 
       const HorizontalLine = <hr style={{width:"100%", marginLeft:"8px", marginRight:"8px", color:"black", opacity:"100%"}}/>
-      const VerticalLine = <hr style={{marginTop:"8px", marginBottom:"8px", opacity:"100%", width:"1px",color:"black",}}/>
+      const VerticalLine = <hr style={{marginTop:"0px", marginBottom:"0px", opacity:"100%", width:"4px",color:"black"}}/>
 
+      const stories = this.getDisplayStories(this.props.sliderVal)
 
-
-      this.stories = this.getDisplayStories(this.props.sliderVal)
-      console.log(this.stories);
-
-      return (this.stories.length === 0  ? <div class="lds-ripple"><div></div><div></div></div> :
+      return (stories.length === 0  ? <div class="lds-ripple"><div></div><div></div></div> :
             <div class="content-wrapper">
+
 
             <div class="content-row-0">
               <div class="content-row-0-main">
                 {/*MAIN STORY HERE*/}
-                { this.stories.length > 0 && <Story data={this.stories[0]} size={2} hideImage />}
+                { stories.length > 0 && <Story data={stories[0]} size={2} hideImage />}
               </div>
-              {this.stories.length > 1 && VerticalLine }
+              {stories.length > 1 && VerticalLine }
 
               <div class="content-row-0-column">
                 <div class="content-row-0-column-0">
                   {/*Secondary STORY HERE*/}
-                  { this.stories.length > 1 && <Story data={this.stories[1]} size={1} hideImage/>}
+                  { stories.length > 1 && <Story data={stories[1]} size={1} hideImage/>}
                 </div>
-                {this.stories.length > 2 && HorizontalLine}
+                {stories.length > 2 && HorizontalLine}
                 <div class="content-row-0-column-1">
                   {/*Secondary STORY HERE*/}
-                  { this.stories.length > 2 && <Story data={this.stories[2]} size={1} hideImage/>}
+                  { stories.length > 2 && <Story data={stories[2]} size={1} hideImage/>}
                 </div>
               </div>
 
             </div>
-            {this.stories.length > 3 && HorizontalLine}
+            {stories.length > 3 && HorizontalLine}
 
             <div class="content-row-1">
               <div class="content-row-1-0">
                 {/*Secondary STORY HERE*/}
-                { this.stories.length > 3 && <Story data={this.stories[3]} size={1} hideImage/>}
+                { stories.length > 3 && <Story data={stories[3]} size={1} hideImage/>}
               </div>
-              {this.stories.length > 4 && VerticalLine }
+              {stories.length > 4 && VerticalLine }
               <div class="content-row-1-1">
                 {/*Secondary STORY HERE*/}
-                { this.stories.length > 4 && <Story data={this.stories[4]} size={1} hideImage/>}
+                { stories.length > 4 && <Story data={stories[4]} size={1} hideImage/>}
               </div>
-              {this.stories.length > 5 && VerticalLine }
+              {stories.length > 5 && VerticalLine }
               <div class="content-row-1-2">
                 {/*Secondary STORY HERE*/}
-                { this.stories.length > 5 && <Story data={this.stories[5]} size={1} hideImage/>}
+                { stories.length > 5 && <Story data={stories[5]} size={1} hideImage/>}
               </div>
             </div>
-            {this.stories.length > 6 && HorizontalLine}
+            {stories.length > 6 && HorizontalLine}
 
             <div class="content-row-2">
               <div class="content-row-2-0">
                 {/*Secondary STORY HERE*/}
-                { this.stories.length > 6 && <Story data={this.stories[6]} size={1} hideImage/>}
+                { stories.length > 6 && <Story data={stories[6]} size={1} hideImage/>}
               </div>
-              {this.stories.length > 7 && VerticalLine }
+              {stories.length > 7 && VerticalLine }
               <div class="content-row-2-1">
                 {/*Secondary STORY HERE*/}
-                { this.stories.length > 7 &&  <Story data={this.stories[7]} size={1} hideImage/>}
+                { stories.length > 7 &&  <Story data={stories[7]} size={1} hideImage/>}
               </div>
-              {this.stories.length > 8 && VerticalLine }
+              {stories.length > 8 && VerticalLine }
               <div class="content-row-1-column">
                 <div class="content-row-1-column-0">
                   {/*Tertiary STORY HERE*/}
-                  { this.stories.length > 8 &&  <Story data={this.stories[8]} size={0} hideImage/>}
+                  { stories.length > 8 &&  <Story data={stories[8]} size={0} hideImage/>}
                 </div>
-                {this.stories.length > 9 && HorizontalLine}
+                {stories.length > 9 && HorizontalLine}
                 <div class="content-row-1-column-1">
                   {/*Tertiary STORY HERE*/}
-                  { this.stories.length > 9 && <Story data={this.stories[9]} size={0} hideImage/>}
+                  { stories.length > 9 && <Story data={stories[9]} size={0} hideImage/>}
                 </div>
               </div>
             </div>

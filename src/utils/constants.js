@@ -10,8 +10,12 @@ export const ADFONTES_TO_PERCENTAGE_FACTOR = SLIDER_WRAPPER_WIDTH/ADFONTES_MAX
 export const ADFONTES_TO_PRETTO_FACTOR =SLIDER_MAX/ADFONTES_MAX
 
 export const STORAGE_SITE_SUFFIX = "Stories"
-
 export const BIAS_WINDOW_SIZE=1
+
+export const SHOW_SITES_BIAS = false;
+export const SHOW_STORY_SCORE = false;
+
+
 export const RSS = {
   reuters: {
     about: {name:"AP Reuters", logo:"https://s3.reutersmedia.net/resources_v2/images/favicon/favicon-96x96.png",bias: -0.95, link:"retuers.com"},
