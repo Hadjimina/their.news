@@ -15,6 +15,7 @@ export const BIAS_WINDOW_SIZE=1
 export const SHOW_SITES_BIAS = false;
 export const SHOW_STORY_SCORE = false;
 
+export const BACKEND_URL = "localhost:5000"
 
 export const RSS = {
   reuters: {

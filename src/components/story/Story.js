@@ -5,43 +5,45 @@ import * as Constants from "../../utils/constants"
 class Story extends React.Component{
   constructor(props) {
      super(props);
-     this.state = {bias: 3, value:0, fontSize: Constants.TITLE_FONT_SIZES[this.props.size], imageURL: ""};
-    console.log(this.props.story);
+     this.state = {bias: 3, value:0, fontSize: Constants.TITLE_FONT_SIZES[this.props.size], imageURL:""};
+     //imageURL
+
+
+
    }
 
-   async componentDidMount(){
-    /*  fetch(this.props.data.link)
-        .then((resp)=>{
-          var a = resp.text();
-          var list=[];
-          for (var i=0,l=a.length;i<l;i++)
-          {
-              if (/\.(jpg|gif|png|jpeg)$/im.test(a[i].getAttribute('src')))
-              {
-                  list.push(a[i].getAttribute('src'));
-              }
-          }
-          console.log(list);
-        })
-        .then((text)=>{
-          console.log(text)
-        })*/
+   componentDidUpdate(prevProps) {
 
-     }
+        if( this.props.size > 0 && prevProps.data.link !== this.props.data.link){
+        const url = "http://localhost:5000/api"
+        const requestObject = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({"url":this.props.data.link})
+        }
 
-
+          fetch(url,requestObject).then((resposne)=>resposne.json()).then((data)=>{
+            if("return" in data &&
+              (data["return"].includes(".jpg")||data["return"].includes(".png"))  &&
+              (this.props.size > 1 ? true : !!(Math.random() >= 0.5))){
+              console.log(data["return"]);
+              this.setState({imageURL:data["return"]})
+            }
+          })
+        }
+      }
 
 
 
     render() {
         return (
           <div class="story-wrapper" onClick={()=>{window.open(this.props.data.link, "_blank")}}
-                style={{flexDirection: !this.props.hideImage && this.props.size > 1 ? "row":"column"}}>
+                style={{flexDirection: this.state.imageURL !="" ?  "row":"column"}}>
 
-          {this.props.hideImage ? null :
-            <div class="story-image">
-              <img src={this.state.imageURL} alt={"dummy alt"} />
-            </div>
+          {this.state.imageURL =="" ? null:
+
+              <img src={this.state.imageURL} class="story-image" alt={"dummy alt"} />
+
           }
 
           <div class="story-content-wrapper">

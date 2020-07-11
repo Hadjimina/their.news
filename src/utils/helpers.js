@@ -33,52 +33,17 @@ const helpers = {
     }
     return array
   },
+  getImagesFromString(str){
+    var m,urls = [],rex = /<img[^>]+src="?([^"\s]+)"?\s*\/>/g;
+    //str = '<img src="http://site.org/one.jpg />\n <img src="http://site.org/two.jpg />',
 
 
-
-  async OLDgetStoriesContent(keyword,sites, value){
-    console.log("started");
-    let parser = new Parser();
-    const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
-
-    var minScore = 0;
-
-    for (var site in sites) {
-         if(sessionStorage.getItem(site+Constants.STORAGE_SITE_SUFFIX)){
-           continue;
-         }
-
-         var storyArray = []
-         console.log(site);
-
-         var currentRss = sites[site].feed
-         let feed = await parser.parseURL(CORS_PROXY + currentRss.feedLink);
-         for (var item of feed.items) {
-
-
-           var story = {title: item[currentRss.title], desc: item[currentRss.desc], link:item[currentRss.link],
-                         site:{name:Constants.RSS[site].about.name, link:Constants.RSS[site].about.link}}
-           console.log("   "+story.title);
-           //Remove HTML
-           var temp = document.createElement("div");
-           temp.innerHTML = story.desc;
-           story.desc = temp.textContent || temp.innerText;
-
-           story.score = Math.floor(Math.random() * 1000);
-           if(story.score >= minScore){
-
-             storyArray.push(story)
-
-             if(storyArray.length >= 11){
-               storyArray.sort((a, b) => a.score < b.score);
-               storyArray.splice(storyArray.length-1, 1);
-             }
-
-           }
-       }
-       sessionStorage.setItem(site+Constants.STORAGE_SITE_SUFFIX,storyArray)
+    while ( m = rex.exec( str ) ) {
+      urls.push( m[1] );
     }
-    console.log("Done");
+
+    console.log( urls );
+    return urls
   }
 }
 export default helpers;

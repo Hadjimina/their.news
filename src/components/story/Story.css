@@ -5,11 +5,14 @@
   margin:8px;
   cursor: pointer;
   display: flex;
-
+  width: 100%;
+  height:100%;
 }
 
 .story-image{
   flex:1;
+  max-width:50%;
+  margin:8px;
 }
 
 .story-title{

@@ -20,6 +20,7 @@ class Header extends React.Component{
     render() {
         return (
             <header>
+              
               <Title/>
               <PoliticalSlider bias={this.props.bias} onSliderChange={this.handleSliderChange.bind(this)}/>
               {false ? <Searchbar onSearchChange={this.handleChange.bind(this)}/>: <div/>}

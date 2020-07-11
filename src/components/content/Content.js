@@ -3,7 +3,7 @@ import "./Content.css";
 import Story from "../story/Story"
 import Parser from "rss-parser"
 import * as Constants from "../../utils/constants"
-import Helpers from "../../utils/helpers"
+
 
 class Content extends React.Component{
 
@@ -16,8 +16,6 @@ constructor(props) {
        sliderVal:this.props.sliderVal,
        stories:[]
      }
-
-
    }
 
    async componentDidMount(){
@@ -56,10 +54,10 @@ constructor(props) {
      }
 
      //Nothing in window so get closest
-     if(storiesToShow.length == 0){
+     if(storiesToShow.length === 0){
        console.log("NOTHING IN WINDOW");
-       var site = minDistanceSite
-       var gotten = sessionStorage.getItem(site[1]+Constants.STORAGE_SITE_SUFFIX)
+       site = minDistanceSite
+       gotten = sessionStorage.getItem(site[1]+Constants.STORAGE_SITE_SUFFIX)
 
        if(gotten != null){
            storiesToShow = storiesToShow.concat(JSON.parse(gotten))
@@ -82,22 +80,35 @@ constructor(props) {
     let parser = new Parser();
     const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
     var storyArray = []
-    var minScore = 0;
 
     var currentRss = Constants.RSS[site].feed
     let feed = await parser.parseURL(CORS_PROXY + currentRss.feedLink);
+    //console.log("SITE************* "+site);
+    //  console.log(Helpers.getImagesFromString(JSON.stringify(feed.items)));
+
     for (var item of feed.items) {
 
         var story = {title: item[currentRss.title], desc: item[currentRss.desc], link:item[currentRss.link],
                       site:{name:Constants.RSS[site].about.name, link:Constants.RSS[site].about.link}}
+
+
+
+        /*let response = await fetch(url, requestObject)
+
+        var data = response.json()
+        //console.log(data);
+
+        */
 
         //Remove HTML
         var temp = document.createElement("div");
         temp.innerHTML = story.desc;
         story.desc = temp.textContent || temp.innerText;
 
+        // score
+        story.score = Math.floor(Math.random() * 100);
+        story.score += "imageURL" in story ? 500 : 0
 
-        story.score = Math.floor(Math.random() * 1000);
 
         if(Constants.SHOW_STORY_SCORE){
           story.title = story.score +" "+story.title
@@ -133,19 +144,19 @@ constructor(props) {
             <div class="content-row-0">
               <div class="content-row-0-main">
                 {/*MAIN STORY HERE*/}
-                { stories.length > 0 && <Story data={stories[0]} size={2} hideImage />}
+                { stories.length > 0 && <Story data={stories[0]} size={2}  />}
               </div>
               {stories.length > 1 && VerticalLine }
 
               <div class="content-row-0-column">
                 <div class="content-row-0-column-0">
                   {/*Secondary STORY HERE*/}
-                  { stories.length > 1 && <Story data={stories[1]} size={1} hideImage/>}
+                  { stories.length > 1 && <Story data={stories[1]} size={1} />}
                 </div>
                 {stories.length > 2 && HorizontalLine}
                 <div class="content-row-0-column-1">
                   {/*Secondary STORY HERE*/}
-                  { stories.length > 2 && <Story data={stories[2]} size={1} hideImage/>}
+                  { stories.length > 2 && <Story data={stories[2]} size={1} />}
                 </div>
               </div>
 
@@ -155,17 +166,17 @@ constructor(props) {
             <div class="content-row-1">
               <div class="content-row-1-0">
                 {/*Secondary STORY HERE*/}
-                { stories.length > 3 && <Story data={stories[3]} size={1} hideImage/>}
+                { stories.length > 3 && <Story data={stories[3]} size={1} />}
               </div>
               {stories.length > 4 && VerticalLine }
               <div class="content-row-1-1">
                 {/*Secondary STORY HERE*/}
-                { stories.length > 4 && <Story data={stories[4]} size={1} hideImage/>}
+                { stories.length > 4 && <Story data={stories[4]} size={1} />}
               </div>
               {stories.length > 5 && VerticalLine }
               <div class="content-row-1-2">
                 {/*Secondary STORY HERE*/}
-                { stories.length > 5 && <Story data={stories[5]} size={1} hideImage/>}
+                { stories.length > 5 && <Story data={stories[5]} size={1} />}
               </div>
             </div>
             {stories.length > 6 && HorizontalLine}
@@ -173,23 +184,23 @@ constructor(props) {
             <div class="content-row-2">
               <div class="content-row-2-0">
                 {/*Secondary STORY HERE*/}
-                { stories.length > 6 && <Story data={stories[6]} size={1} hideImage/>}
+                { stories.length > 6 && <Story data={stories[6]} size={1} />}
               </div>
               {stories.length > 7 && VerticalLine }
               <div class="content-row-2-1">
                 {/*Secondary STORY HERE*/}
-                { stories.length > 7 &&  <Story data={stories[7]} size={1} hideImage/>}
+                { stories.length > 7 &&  <Story data={stories[7]} size={1} />}
               </div>
               {stories.length > 8 && VerticalLine }
               <div class="content-row-1-column">
                 <div class="content-row-1-column-0">
                   {/*Tertiary STORY HERE*/}
-                  { stories.length > 8 &&  <Story data={stories[8]} size={0} hideImage/>}
+                  { stories.length > 8 &&  <Story data={stories[8]} size={0} />}
                 </div>
                 {stories.length > 9 && HorizontalLine}
                 <div class="content-row-1-column-1">
                   {/*Tertiary STORY HERE*/}
-                  { stories.length > 9 && <Story data={stories[9]} size={0} hideImage/>}
+                  { stories.length > 9 && <Story data={stories[9]} size={0} />}
                 </div>
               </div>
             </div>
