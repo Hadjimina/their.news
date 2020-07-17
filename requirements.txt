@@ -7,7 +7,7 @@ enum34==1.1.6
 Flask==1.1.2
 Flask-Cors==3.0.8
 gunicorn==19.10.0
-gyp==0.1
+
 idna==2.6
 ipaddress==1.0.17
 itsdangerous==1.1.0
