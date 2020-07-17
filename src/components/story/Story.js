@@ -14,23 +14,23 @@ class Story extends React.Component{
 
    componentDidUpdate(prevProps) {
 
-        if( this.props.size > 0 && prevProps.data.link !== this.props.data.link){
-        const url = "http://localhost:5000/api"
-        const requestObject = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({"url":this.props.data.link})
-        }
+      /*  if( this.props.size > 0 && prevProps.data.link !== this.props.data.link){
+          const url = "http://localhost:8080/api"
+          const requestObject = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({"url":this.props.data.link})
+          }
 
-          fetch(url,requestObject).then((resposne)=>resposne.json()).then((data)=>{
-            if("return" in data &&
-              (data["return"].includes(".jpg")||data["return"].includes(".png"))  &&
-              (this.props.size > 1 ? true : !!(Math.random() >= 0.5))){
-              console.log(data["return"]);
-              this.setState({imageURL:data["return"]})
-            }
-          })
-        }
+            fetch(url,requestObject).then((resposne)=>resposne.json()).then((data)=>{
+              if("return" in data &&
+                (data["return"].includes(".jpg")||data["return"].includes(".png"))  &&
+                (this.props.size > 1 ? true : !!(Math.random() >= 0.5))){
+                console.log(data["return"]);
+                this.setState({imageURL:data["return"]})
+              }
+            })
+        }*/
       }
 
 
@@ -42,7 +42,7 @@ class Story extends React.Component{
 
           {this.state.imageURL =="" ? null:
 
-              <img src={this.state.imageURL} class="story-image" alt={"dummy alt"} />
+              <img src={this.props.data.imageURL} class="story-image" alt={"dummy alt"} />
 
           }
 

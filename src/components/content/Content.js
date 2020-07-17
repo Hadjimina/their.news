@@ -91,13 +91,10 @@ constructor(props) {
         var story = {title: item[currentRss.title], desc: item[currentRss.desc], link:item[currentRss.link],
                       site:{name:Constants.RSS[site].about.name, link:Constants.RSS[site].about.link}}
 
-
-
         /*let response = await fetch(url, requestObject)
 
         var data = response.json()
         //console.log(data);
-
         */
 
         //Remove HTML
@@ -115,7 +112,33 @@ constructor(props) {
         }
         storyArray.push(story)
     }
+
+    //Get all image links
+    //
+    // var storyLinks = storyArray.map((story, index) => { return {url:story.link}})
+    //
+    // const url = "http://localhost:8080/api"
+    // const requestObject = {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify(storyLinks)
+    // }
+    //
+    // await fetch(url,requestObject).then((resposne)=>resposne.json()).then((data)=>{
+    //   if("return" in data && data["return"].length > 0){
+    //
+    //     for (var i = 0; i < data["return"].length; i++) {
+    //       var current = data["return"][i]
+    //       if(current != "error")
+    //       {
+    //         storyArray[i].imageURL = current;
+    //       }
+    //     }
+    //   }
+    // })
+
     sessionStorage.setItem(site+Constants.STORAGE_SITE_SUFFIX,JSON.stringify(storyArray))
+
     this.forceUpdate()
   }
 
