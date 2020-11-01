@@ -3,7 +3,7 @@ import sys
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from bs4 import BeautifulSoup
-import urllib2
+import urllib.request as urllib2
 import re
 import json
 import logging

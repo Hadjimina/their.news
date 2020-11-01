@@ -1,99 +1,86 @@
-import React from 'react';
-import "./App.css";
-import Header from "./components/header/Header"
-import Content from "./components/content/Content"
-import BiasListElement from "./components/biasListElement/BiasListElement"
-import * as Constants from "./utils/constants"
-import Helpers from "./utils/helpers"
-import Button from 'react-bootstrap/Button';
+import React, { useState, useEffect } from 'react';
+import {BiasSlider, SearchBox, Story} from "./components"
 
 
+function App() {
+  const [sources, setSources] = useState(["cnn.com"]);
+  const [search, setSearch] = useState();
+  const [articles, setArticles] = useState([]);
 
-class App extends React.Component {
-  constructor(props) {
+  const sourceUpdateHandler = (sourceFromSlider) => {
+    if(sourceFromSlider.join(',') !== sources.join(',')){
+        setSources(sourceFromSlider)
+    }
+  }
 
-     super(props);
-     this.state = {
-       selectedSites:[],
-       biasSelected:false,
-       sliderVal:0
-     }
-
-     //Setup sites to select
-     var arr = []
-     var sites = Object.keys(Constants.RSS)
-     for (var site of sites) {
-         arr.push(Constants.RSS[site].about)
-     }
-     this.newsSites = Helpers.fisherYates(arr);
+  const searchUpdateHandler = (searchFromBox) => {
+    if(searchFromBox !== search){
+      setSearch(searchFromBox)
+    }
+  }
 
 
-   }
+  //Only update if sources have changed
+  useEffect(
+    () => {
+      console.log("GETTING");
+      getNews().then(data => {
+        console.log("News gotten");
+        setArticles(data.articles)
+      });
+    },[sources, search]
+  );
 
-  siteSelection(id){
-    var currentSelection = this.state.selectedSites
-    var index = currentSelection.indexOf(this.newsSites[id])
+  async function getNews() {
+    var url = "https://newscatcher.p.rapidapi.com/v1/"
+    var data = {
+      "lang": "en",
+      "media": "True"
+    }
 
-    if(index >= 0){
-      currentSelection.splice(index, 1);
+    //Check that search value existst & is not empty
+    if(search && search.replace(/\s/g, "") !== ""){
+      url = new URL(url+"search")
+      data = {
+        ...data,
+      	"sort_by": "relevancy",
+      	"page": "1",
+      	"q": search,
+        "sources": sources.toString()
+      }
     }else{
-      currentSelection.unshift(this.newsSites[id])
+      data = {
+        ...data,
+        "country":"US"
+      }
+      url = new URL(url+"latest_headlines")
     }
 
-    if(currentSelection.length > 3){
-      currentSelection.length = 3
-    }
-
-    this.setState({selectedSites:currentSelection})
+    url.search = new URLSearchParams(data).toString();
+    // Default options are marked with *
+    const response = await fetch(url, {
+      method: 'GET', // *GET, POST, PUT, DELETE, etc.
+      headers: {
+      	"x-rapidapi-host": "newscatcher.p.rapidapi.com",
+      	"x-rapidapi-key": "59014fc2c7msh3282451031a043bp1d470cjsne3072278335f",
+      	"useQueryString": true
+      }
+    });
+    return response.json(); // parses JSON response into native JavaScript objects
   }
 
-  handleSliderChange(value){
-    this.setState({sliderVal: value})
 
-  }
 
-  render(){
-    var widthStyle={width: window.screen.width*Constants.PAGE_WIDTH_PERCENTAGE}
-
-    return (
+  return (
       <div class="App">
-
-          <div class="Main" style={widthStyle}>
-
-            {!this.state.biasSelected &&
-              <div class="biasWrapper">
-                <div class="biasShrinker">
-                <div class="biasTitle">Hi,</div>
-                <div class="biasText">Before we can show you todays news from to
-                other side of the political spectrum, we need to know which news sites you like the most.
-                <br/><br/>
-                <p>Please select your three most trusted news sources.</p>
-                </div>
-                <div class="biasList">
-                  {this.newsSites.map((item,index) =>
-                    <BiasListElement key={index} site={item} id={index} checked={this.state.selectedSites.indexOf(this.newsSites[index])>=0} onClick={this.siteSelection.bind(this)}/>
-                  )}
-                  <Button variant="secondary" disabled={this.state.selectedSites.length===0} onClick={()=>{this.setState({biasSelected:true})}}>Next</Button>
-                </div>
-                </div>
-              </div>
-            }
-
-            {this.state.biasSelected  &&
-            <div>
-              <div class="Header">
-                <Header onSliderChange={this.handleSliderChange.bind(this)} bias={this.state.selectedSites}/>
-                <hr/>
-              </div>
-
-              <div class="Content">
-                <Content sliderVal={this.state.sliderVal}/>
-              </div>
-            </div>}
-          </div>
+        <BiasSlider updateSources={sourceUpdateHandler}/>
+        <SearchBox updateSearch={searchUpdateHandler}/>
+        <div>
+          {articles.map((article, index) => <Story key={index} article={article}/>)}
+        </div>
       </div>
     );
-  }
+
 }
 
 
