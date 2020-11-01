@@ -2,7 +2,7 @@ asn1crypto==0.24.0
 backports.functools-lru-cache==1.6.1
 beautifulsoup4==4.9.1
 click==7.1.2
-cryptography==2.1.4
+cryptography==3.2
 enum34==1.1.6
 Flask==1.1.2
 Flask-Cors==3.0.8
