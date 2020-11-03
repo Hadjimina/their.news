@@ -1,0 +1,5 @@
+{
+  "plugins": [
+    "module:babel-root-slash-import"
+  ]
+}
