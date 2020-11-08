@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import * as Constants from "../../constants.js"
 import { utils } from '../../helpers';
+import './BiasSlider.css';
 
 function BiasSlider(props) {
   const [value, setValue] = useState(0);
@@ -27,8 +28,14 @@ function BiasSlider(props) {
     return sourcesByDistance.slice(0,n)
   }
 
+  const sliderLabels = ["Extreme Left", "Left", "Skews Left", "Skews Right",
+   "Right", "Extreme Right"]
+
   return (
-    <div>
+    <div style={{width:"100%", backgroundColor:"white", marginTop:"8px", marginBottom:"8px"}}>
+      <div class="labels">
+        {sliderLabels.map((label, index)=><div>{label}</div>)}
+      </div>
       <input type="range" min={-42} max={42} value={value}
         className="slider"
         onChange = {updateValue}

@@ -3,4 +3,10 @@ function getSourcesByBias(sources){
   return dictionary
 }
 
-export {getSourcesByBias}
+function getSourceTitleByURL(sources){
+  let dictionary = Object.assign({}, ...sources.map((x) => ({[x.link]: x.name})));
+  return dictionary
+}
+
+
+export {getSourcesByBias, getSourceTitleByURL}

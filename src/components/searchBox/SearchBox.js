@@ -29,11 +29,16 @@ function SearchBox(props) {
     outline: "none",
   }
 
+  const wrapper={
+    width:"100%",
+    display:"flex",
+    justifyContent:"center",
+    alignItems:"center",
+    paddingBottom: "16px"
+  }
   return (
-    <div  style={{width:"60%", display:"flex", justifyContent:"center", alignItems:"center"}}>
-      <i class="las la-battery-three-quarters"></i>
+    <div  style={wrapper}>
       <FontAwesomeIcon icon={faSearch} style={{marginRight:"-40px", color:"rgb(154, 160, 166)", fontSize:"1.5rem"}}/>
-
       <input type="text"class="wrapper"
         style={inputStyle}
         onChange = {changeSearch}
