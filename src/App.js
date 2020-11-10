@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {BiasSlider, SearchBox, Story} from "./components"
 import * as Constants from "./constants.js"
-import * as Credentials from "./credentials.js"
 import './App.css';
 import ReactGA from 'react-ga';
 
@@ -79,7 +78,7 @@ function App() {
       method: 'GET', // *GET, POST, PUT, DELETE, etc.
       headers: {
       	"x-rapidapi-host": "newscatcher.p.rapidapi.com",
-      	"x-rapidapi-key": Credentials.key,
+      	"x-rapidapi-key": process.env.key,
       	"useQueryString": true
       }
     });
@@ -87,7 +86,7 @@ function App() {
   }
 
   function initializeReactGA() {
-    ReactGA.initialize(Credentials.trackingID);
+    ReactGA.initialize(process.env.trackingID);
     ReactGA.pageview('/');
   }
   initializeReactGA();
