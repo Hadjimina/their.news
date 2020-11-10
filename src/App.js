@@ -78,7 +78,7 @@ function App() {
       method: 'GET', // *GET, POST, PUT, DELETE, etc.
       headers: {
       	"x-rapidapi-host": "newscatcher.p.rapidapi.com",
-      	"x-rapidapi-key": process.env.key,
+      	"x-rapidapi-key": process.env.REACT_APP_API_KEY,
       	"useQueryString": true
       }
     });
@@ -86,7 +86,7 @@ function App() {
   }
 
   function initializeReactGA() {
-    ReactGA.initialize(process.env.trackingID);
+    ReactGA.initialize(process.env.REACT_APP_TRACKING_ID);
     ReactGA.pageview('/');
   }
   initializeReactGA();
@@ -113,11 +113,12 @@ function App() {
     height: "1px"
   }
 
+  console.log();
 
   return (
       <div style={wrapper}>
         <h1 style={{fontSize:"5rem", width:"34.75rem",textAlign:"center"}}>
-          Perspective
+          Perspective {}
         </h1>
         <hr style={darkHR}/>
         <div class="components">
