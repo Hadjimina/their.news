@@ -5,32 +5,68 @@
   border-bottom-width: 2px;
   border-bottom-style: solid;
   border-bottom-color: #dfe1e5;
-  padding:16px;
+  padding: 16px 16px 0px 16px;
   flex:1;
-  width:100%;
-  height:100%;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display:flex;
+  flex-direction: column;
 }
 
 .sourceDateWrapper{
-    display:flex;
-    flex-direction: row;
-    justify-content: space-between;
-    background-color: "red";
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex:1;
+  align-items: flex-end;
+}
+
+.textImageWrapper{
+  display: flex;
+  flex-direction: row;
+  flex:1;
+  max-height: 95%;
+
 }
 
 .details{
   color: #c6c8cc;
   font-style: italic;
-}
 
-#summary{
-  max-height: 75%;
 }
-
 #title{
-  max-height: 15%
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* FIXME: in mobile mode clamp should be 1 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 24px;
 }
-.fill {
+#article{
+  display: -webkit-box;
+  -webkit-line-clamp: 10;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 16px;
+}
+
+.text{
+  flex:1;
+  overflow: auto;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.text {
+  flex:1;
+}
+
+.fill{
+  flex:1;
+}
+/* .fill {
     padding-left:  8px;
     flex:1;
     object-fit: contain;
@@ -44,14 +80,4 @@
     flex-shrink: 0;
     min-width: 100%;
     min-height: 100%
-}
-
-.text{
-  flex:1;
-  overflow: auto;
-}
-
-.textImageWrapper{
-  display: flex;
-  flex-direction: row;
-}
+} */

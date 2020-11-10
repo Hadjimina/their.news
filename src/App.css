@@ -5,19 +5,6 @@
   width: 100%;
 }
 
-.child {
-  height: 30rem;
-  
-  flex: 1;
-  min-width: 33.3%;
-  border: 5px solid white;
-}
-
-@media (max-width: 700px) {
-  .child {
-    min-width: 50%;
-  }
-}
 
 
 .components{

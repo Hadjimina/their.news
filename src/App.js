@@ -3,13 +3,20 @@ import {BiasSlider, SearchBox, Story} from "./components"
 import * as Constants from "./constants.js"
 import * as Credentials from "./credentials.js"
 import './App.css';
+import ReactGA from 'react-ga';
+
 
 const rows = [0,2,4]
+const getWidth = () => window.innerWidth
+  || document.documentElement.clientWidth
+  || document.body.clientWidth;
+
 // <Story key={index} article={article}/>
 function App() {
   const [sources, setSources] = useState(["cnn.com"]);
   const [search, setSearch] = useState();
   const [articles, setArticles] = useState([]);
+  const [mobile, setMobile] = useState(getWidth()<800);
 
   const sourceUpdateHandler = (sourceFromSlider) => {
     if(sourceFromSlider.join(',') !== sources.join(',')){
@@ -23,13 +30,23 @@ function App() {
     }
   }
 
-  // Only update if sources have changed
-  useEffect(
-    () => {
+
+  useEffect(() => {
+      let timeoutId = null;
+      const resizeListener = () => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => setMobile(getWidth()<800), 0);
+      };
+      // set resize listener
+      window.addEventListener('resize', resizeListener);
+
       getNews().then(data => {
-        console.log(data.articles);
         setArticles(data.articles)
       });
+
+      return () => {
+        window.removeEventListener('resize', resizeListener);
+      }
     },[sources, search]
   );
 
@@ -69,6 +86,12 @@ function App() {
     return response.json(); // parses JSON response into native JavaScript objects
   }
 
+  function initializeReactGA() {
+    ReactGA.initialize(Credentials.trackingID);
+    ReactGA.pageview('/');
+  }
+  initializeReactGA();
+
   const wrapper = {
     display:"flex",
     flexDirection:"column",
@@ -92,11 +115,10 @@ function App() {
   }
 
 
-
   return (
       <div style={wrapper}>
         <h1 style={{fontSize:"5rem", width:"34.75rem",textAlign:"center"}}>
-          Perspective news
+          Perspective
         </h1>
         <hr style={darkHR}/>
         <div class="components">
@@ -108,10 +130,14 @@ function App() {
         </div>
         <hr style={lightHR}/>
 
-        <div id="parent">
+        <div id="parent" class={{display:"flex"}}>
           {articles.map((article, index) =>
-            <div class="child">
-              <Story key={index} article={article}/>
+            <div style={
+              mobile ? {flex: index==0 ? "2 0 100%" : "1 0 100%", height:"24rem"} : {flex: index==0 ? "2 0 62%" : "1 0 31%", height:"28rem"}}>
+              <Story key={index} article={article} index={index}
+                  showImage={!(index == 1 || index == Math.floor(Math.random() * 3) + 2 )}
+                  minor={index !=0}
+                  mobile={mobile}/>
             </div>
           )}
 
