@@ -1,7 +1,4 @@
-# :newspaper: Perspecitve News
-
-
-
+# :newspaper: Perspecitve.news
 
 ![](screenshot.png)
 ## Goal
@@ -9,7 +6,7 @@ The Goal of this project is to build a website where you can find news that chal
 
 ## Website
 
-### [Accessible here](https://perspectivenews.herokuapp.com/)
+### [Accessible here](https://perspective.news)
 Website might be temporarily down
 
 In order to achieve this goal, a website will be built which, first detects roughly your existing political standing and then presents you with news articles from the other side of the spectrum.
@@ -19,7 +16,6 @@ The media bias chart found from [adfontesmedia](https://www.adfontesmedia.com/do
 | Media Chart USA | Media Chart Switzerland     |
 | :------------- | :------------- |
 | ![](mediaChartUS.png)  | ![](mediaChartCH.jpg)       |
-
 
 
 

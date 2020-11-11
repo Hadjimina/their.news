@@ -123,7 +123,7 @@ function App() {
         <hr style={darkHR}/>
         <div class="components">
           <h3 style={{fontSize: "2.5rem", textAlign:"center"}}>
-            Your polictical compass Test
+            Your polictical compass
           </h3>
           <BiasSlider updateSources={sourceUpdateHandler}/>
           <SearchBox updateSearch={searchUpdateHandler}/>
