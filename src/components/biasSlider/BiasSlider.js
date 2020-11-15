@@ -11,7 +11,15 @@ function BiasSlider(props) {
   }
 
   const updateSources = () => {
-    props.updateSources(getClosestSources())
+    var i = 5
+    var sources = getClosestSources(i)
+    console.log("sources");
+    console.log(sources);
+    while (sources == null) {
+      i+=1
+      sources = getClosestSources(i)
+    }
+    props.updateSources(sources)
   }
 
   const getClosestSources = (n = 1) =>{

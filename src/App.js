@@ -12,6 +12,7 @@ function App() {
   const [articles, setArticles] = useState([]);
 
   const sourceUpdateHandler = (sourceFromSlider) => {
+    console.log(sourceFromSlider);
     if(sourceFromSlider.join(',') !== sources.join(',')){
         setSources(sourceFromSlider)
     }
@@ -50,6 +51,7 @@ function App() {
       	"q": search,
       }
     }else{
+
       data = {
         ...data,
         "q": Constants.featuredTopics[Math.floor(Math.random() * Constants.featuredTopics.length)],
@@ -96,7 +98,7 @@ function App() {
   return (
       <div style={wrapper}>
         <h1 style={{fontSize:"5rem", width:"34.75rem",textAlign:"center"}}>
-          Perspective news
+          Their News
         </h1>
         <hr style={darkHR}/>
         <div class="components">
