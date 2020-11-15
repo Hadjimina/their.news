@@ -8,8 +8,6 @@
 
 
 .components{
-  width:50rem;
-  max-width: 100%;
-  padding-left: 16px;
-  padding-righ: 16px;
+
+  padding: 8px;
 }

@@ -24,7 +24,6 @@
 
 .textImageWrapper{
   display: flex;
-  flex-direction: row;
   flex:1;
   max-height: 95%;
 
@@ -37,7 +36,7 @@
 }
 #title{
   display: -webkit-box;
-  -webkit-line-clamp: 3; /* FIXME: in mobile mode clamp should be 1 */
+
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -45,7 +44,7 @@
 }
 #article{
   display: -webkit-box;
-  -webkit-line-clamp: 10;
+
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;

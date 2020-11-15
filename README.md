@@ -1,4 +1,4 @@
-# :newspaper: Perspecitve.news
+# :newspaper: Their News
 
 ![](screenshot.png)
 ## Goal
@@ -21,14 +21,7 @@ The media bias chart found from [adfontesmedia](https://www.adfontesmedia.com/do
 
 
 ### Todo:
-- add Sources:
-  - US:
-    - MSNBC
-    - Washington monthly
-    - Business insider
-    - Washington times
-    - Fox news
-    - CNSNEWS.com
+- Welcome screen with explanation & bias assessment
   - CH:
     - all of them
 - Location selectable

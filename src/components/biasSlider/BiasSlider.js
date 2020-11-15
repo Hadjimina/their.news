@@ -13,14 +13,15 @@ function BiasSlider(props) {
   const updateSources = () => {
     var i = 5
     var sources = getClosestSources(i)
-    console.log("sources");
-    console.log(sources);
+
     while (sources == null) {
       i+=1
       sources = getClosestSources(i)
     }
     props.updateSources(sources)
   }
+
+
 
   const getClosestSources = (n = 1) =>{
     const sourceByBias = utils.getSourcesByBias(Constants.sources)
@@ -36,13 +37,15 @@ function BiasSlider(props) {
     return sourcesByDistance.slice(0,n)
   }
 
-  const sliderLabels = ["Extreme Left", "Left", "Skews Left", "Skews Right",
+  const sliderLabels = props.mobile?[" ", "Left", " ", " ",
+   "Right", " "]:["Extreme Left", "Left", "Skews Left", "Skews Right",
    "Right", "Extreme Right"]
 
+  updateSources();
   return (
     <div style={{width:"100%", backgroundColor:"white", marginTop:"8px", marginBottom:"8px"}}>
-      <div class="labels">
-        {sliderLabels.map((label, index)=><div>{label}</div>)}
+      <div className ="labels">
+        {sliderLabels.map((label, index)=><div key={index}>{label}</div>)}
       </div>
       <input type="range" min={-42} max={42} value={value}
         className="slider"

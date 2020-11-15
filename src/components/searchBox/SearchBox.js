@@ -39,7 +39,7 @@ function SearchBox(props) {
   return (
     <div  style={wrapper}>
       <FontAwesomeIcon icon={faSearch} style={{marginRight:"-40px", color:"rgb(154, 160, 166)", fontSize:"1.5rem"}}/>
-      <input type="text"class="wrapper"
+      <input type="text"className ="wrapper"
         style={inputStyle}
         onChange = {changeSearch}
         onFocusOut = {updateSearch}

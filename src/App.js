@@ -12,13 +12,13 @@ const getWidth = () => window.innerWidth
 
 // <Story key={index} article={article}/>
 function App() {
-  const [sources, setSources] = useState(["cnn.com"]);
+  const [sources, setSources] = useState([]);
   const [search, setSearch] = useState();
   const [articles, setArticles] = useState([]);
   const [mobile, setMobile] = useState(getWidth()<800);
 
   const sourceUpdateHandler = (sourceFromSlider) => {
-    console.log(sourceFromSlider);
+
     if(sourceFromSlider.join(',') !== sources.join(',')){
         setSources(sourceFromSlider)
     }
@@ -41,8 +41,10 @@ function App() {
       window.addEventListener('resize', resizeListener);
 
       getNews().then(data => {
+        console.log(data);
         setArticles(data.articles)
       });
+
 
       return () => {
         window.removeEventListener('resize', resizeListener);
@@ -75,15 +77,15 @@ function App() {
     }
 
     url.search = new URLSearchParams(data).toString();
-    // Default options are marked with *
     const response = await fetch(url, {
-      method: 'GET', // *GET, POST, PUT, DELETE, etc.
+      method: 'GET',
       headers: {
       	"x-rapidapi-host": "newscatcher.p.rapidapi.com",
       	"x-rapidapi-key": process.env.REACT_APP_API_KEY,
       	"useQueryString": true
       }
     });
+
     return response.json(); // parses JSON response into native JavaScript objects
   }
 
@@ -100,7 +102,8 @@ function App() {
     width:"80rem",
     margin: "auto",
     paddingTop:"16px",
-    maxWidth:"100%"
+    maxWidth:"100%",
+
     };
 
   const darkHR ={
@@ -115,27 +118,26 @@ function App() {
     height: "1px"
   }
 
-  console.log();
 
   return (
       <div style={wrapper}>
-        <h1 style={{fontSize:"5rem", width:"34.75rem",textAlign:"center"}}>
+        <h1 style={{fontSize:"5rem", textAlign:"center"}}>
           Their News
         </h1>
         <hr style={darkHR}/>
-        <div class="components">
+        <div className ="components">
           <h3 style={{fontSize: "2.5rem", textAlign:"center"}}>
             Your polictical compass
           </h3>
-          <BiasSlider updateSources={sourceUpdateHandler}/>
-          <SearchBox updateSearch={searchUpdateHandler}/>
+          <BiasSlider mobile={mobile} updateSources={sourceUpdateHandler}/>
+          <SearchBox mobile={mobile} updateSearch={searchUpdateHandler}/>
         </div>
         <hr style={lightHR}/>
 
-        <div id="parent" class={{display:"flex"}}>
+        <div id="parent">
           {articles.map((article, index) =>
-            <div style={
-              mobile ? {flex: index==0 ? "2 0 100%" : "1 0 100%", height:"24rem"} : {flex: index==0 ? "2 0 62%" : "1 0 31%", height:"28rem"}}>
+            <div key={index} style={
+              mobile ? {flex: index==0 ? "2 0 100%" : "1 0 100%"} : {flex: index==0 ? "2 0 62%" : "1 0 31%" }}>
               <Story key={index} article={article} index={index}
                   showImage={!(index == 1 || index == Math.floor(Math.random() * 3) + 2 )}
                   minor={index !=0}
