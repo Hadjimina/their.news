@@ -186,12 +186,12 @@ function App() {
             onSelect={(countryCode)=>{setCountry(countryCode)}}/>
         </div>
 
-        <h3>🚧 Work in progress 🚧</h3>
+        <h3>🚧 {country=="US"?"Work in progress":"Laufende Arbeit"} 🚧</h3>
 
         <hr style={darkHR}/>
         <div className ="components">
           <h3 style={{fontSize: "2.5rem", textAlign:"center"}}>
-            Choose a political bias for your news
+            {country == "US" ? "Choose a political bias for your news":"Wählen Sie die Einstellung Ihrer Nachrichten"}
           </h3>
           <BiasSlider mobile={mobile} updateSources={sourceUpdateHandler} initialValue={initialValueSlider} country={country}/>
           <SearchBox mobile={mobile} updateSearch={searchUpdateHandler} initialValue={initialValueSearch} country={country}/>

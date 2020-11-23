@@ -25,9 +25,10 @@ function BiasSlider(props) {
 
   useEffect(updateSources,[]);
 
-  const sliderLabels = props.mobile?[" ", "Left", " ", " ",
-   "Right", " "]:["Extreme Left", "Left", "Skews Left", "Skews Right",
-   "Right", "Extreme Right"]
+  const sliderLabels = props.mobile?(
+    props.country == "US"?[" ", "Left", " ", " ",  "Right", " "]:["Links", " ", " ","Rechts"]):
+   (props.country == "US"?["Extreme Left", "Left", "Skews Left", "Skews Right","Right", "Extreme Right"]: ["Links", "Leicht Links", "Leicht Rechts",
+   "Rechts"])
 
 
   return (
