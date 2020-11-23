@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExclamation } from '@fortawesome/free-solid-svg-icons'
 import ReactFlagsSelect from 'react-flags-select';
 import 'react-flags-select/css/react-flags-select.css';
+import {Helmet} from 'react-helmet'
 
 const rows = [0,2,4]
 const getWidth = () => window.innerWidth
@@ -147,20 +148,27 @@ function App() {
   }
 
   const countrySelection = {
-    
+
   }
   return (
       <div style={wrapper}>
-
+        <Helmet>
+          <title>Their News: Escape your bubble</title>
+          <meta name="description" content="Break out of your political bubble by reading news from the entire political spectrum" />
+        </Helmet>
         <h1 style={{fontSize:"5rem", textAlign:"center"}}>
           Their News
         </h1>
+
         <div style={countrySelection}>
           <ReactFlagsSelect
             defaultCountry={countries[Math.floor(Math.random() * countries.length)]}
            ref={countrySelectorRef}
            countries={countries} />
         </div>
+
+        <h3>🚧 Work in progress 🚧</h3>
+        
         <hr style={darkHR}/>
         <div className ="components">
           <h3 style={{fontSize: "2.5rem", textAlign:"center"}}>
