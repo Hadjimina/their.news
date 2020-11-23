@@ -10,25 +10,30 @@ import ReactFlagsSelect from 'react-flags-select';
 import 'react-flags-select/css/react-flags-select.css';
 import {Helmet} from 'react-helmet'
 
-const rows = [0,2,4]
 const getWidth = () => window.innerWidth
   || document.documentElement.clientWidth
   || document.body.clientWidth;
 
 // <Story key={index} article={article}/>
 function App() {
-  const [sources, setSources] = useState(utils.getClosestSources(3,0));
+  const countries = ["US", "CH"]
+  const countrySelectorRef = useRef();
+
+  const [sources, setSources] = useState();
   const [search, setSearch] = useState();
-  const [articles, setArticles] = useState(["srf.ch"]);
+  const [articles, setArticles] = useState();
   const [mobile, setMobile] = useState(getWidth()<800);
   const [receivedFlag, setReceivedFlage] = useState(false)
+  const [country, setCountry] = useState("US")
 
   const initialValueSlider = Math.floor((Math.random() * 84))-42;
   const initialValueSearch = Constants.featuredTopics[Math.floor(Math.random() * Constants.featuredTopics.length)];
-  const countries = ["US", "CH", "CY"]
-  const countrySelectorRef = useRef();
+
 
   const sourceUpdateHandler = (sourceFromSlider) => {
+    if(!sourceFromSlider || !sources){
+      return
+    }
 
     if(sourceFromSlider.join(',') !== sources.join(',')){
         setSources(sourceFromSlider)
@@ -46,9 +51,12 @@ function App() {
     fetch('https://extreme-ip-lookup.com/json/')
      .then( res => res.json())
      .then(response => {
-       var country = response.countryCode
-       if (countries.includes(country)){
-         countrySelectorRef.current.updateSelected(country)
+       var currentCountry = response.countryCode
+       if (countries.includes(currentCountry)){
+         countrySelectorRef.current.updateSelected(currentCountry)
+         setCountry(currentCountry)
+         // FIXME: set sources amount to 2 for CH sources
+         setSources(utils.getClosestSources(3,0, currentCountry))
        }
      })
      .catch((data, status) => {
@@ -70,33 +78,43 @@ function App() {
    }, []);
 
   useEffect(() => {
+      if (!sources){
+        return
+      }
+
       getNews().then(data => {
         setArticles(data.articles)
         setReceivedFlage(true)
       });
-    },[sources, search]
+    },[sources, search, country]
   );
 
+// FIXME: search function is very odd & called multiple times
   async function getNews() {
+
     var url = new URL("https://newscatcher.p.rapidapi.com/v1/search")
     var data = {
-      "lang": "en",
+
       "media": "True",
       "sort_by": "relevancy",
       "page": "1",
       "sources": sources.toString()
     }
 
+    // TODO: set "nothing found" error message
+
     //Check that search value existst & is not empty
     if(search && search.replace(/\s/g, "") !== ""){
       data = {
         ...data,
+        // "lang":"en",
       	"q": search,
       }
     }else{
 
       data = {
         ...data,
+        // "lang":"en",
         "q": initialValueSearch,
       }
     }
@@ -162,30 +180,31 @@ function App() {
 
         <div style={countrySelection}>
           <ReactFlagsSelect
-            defaultCountry={countries[Math.floor(Math.random() * countries.length)]}
-           ref={countrySelectorRef}
-           countries={countries} />
+            defaultCountry={country}
+            ref={countrySelectorRef}
+            countries={countries}
+            onSelect={(countryCode)=>{setCountry(countryCode)}}/>
         </div>
 
         <h3>🚧 Work in progress 🚧</h3>
-        
+
         <hr style={darkHR}/>
         <div className ="components">
           <h3 style={{fontSize: "2.5rem", textAlign:"center"}}>
             Choose a political bias for your news
           </h3>
-          <BiasSlider mobile={mobile} updateSources={sourceUpdateHandler} initialValue={initialValueSlider}/>
-          <SearchBox mobile={mobile} updateSearch={searchUpdateHandler} initialValue={initialValueSearch}/>
+          <BiasSlider mobile={mobile} updateSources={sourceUpdateHandler} initialValue={initialValueSlider} country={country}/>
+          <SearchBox mobile={mobile} updateSearch={searchUpdateHandler} initialValue={initialValueSearch} country={country}/>
         </div>
         <hr style={lightHR}/>
 
         <div id="parent">
           {articles && articles.length > 0&& articles.map((article, index) =>
             <div key={index} style={
-              mobile ? {flex: index==0 ? "2 0 100%" : "1 0 100%"} : {flex: index==0 ? "2 0 62%" : "1 0 31%" }}>
-              <Story key={index} article={article} index={index}
-                  showImage={!(index == 1 || index == Math.floor(Math.random() * 3) + 2 )}
-                  minor={index !=0}
+              mobile ? {flex: index===0 ? "2 0 100%" : "1 0 100%"} : {flex: index===0 ? "2 0 62%" : "1 0 31%" }}>
+              <Story key={index} article={article} index={index} country={country}
+                  showImage={!(index === 1 || index === Math.floor(Math.random() * 3) + 2 )}
+                  minor={index !==0}
                   mobile={mobile}/>
             </div>
           )}

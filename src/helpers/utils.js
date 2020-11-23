@@ -1,6 +1,7 @@
 import * as Constants from "../constants.js"
 
 function getSourcesByBias(sources){
+  
   let dictionary = Object.assign({}, ...sources.map((x) => ({[x.bias]: x})));
   return dictionary
 }
@@ -10,9 +11,8 @@ function getSourceTitleByURL(sources){
   return dictionary
 }
 
-
-function getClosestSources(n=1, value){
-  const sourceByBias = getSourcesByBias(Constants.sources)
+function getClosestSources(n=1, value, country){
+  const sourceByBias = getSourcesByBias(getSources(country))
   const keys = Object.keys(sourceByBias)
 //   console.log("value "+value);
 //   console.log("keys");
@@ -29,4 +29,13 @@ function getClosestSources(n=1, value){
   sourcesByDistance = sourcesByDistance.map(x=>x[1].link)
   return sourcesByDistance.slice(0,n)
 }
-export {getSourcesByBias, getSourceTitleByURL, getClosestSources}
+
+function getSources(country){
+  if (country === "US"){
+    return Constants.US_Sources
+  }else if(country === "CH"){
+    return Constants.CH_Sources
+  }
+}
+
+export {getSourcesByBias, getSourceTitleByURL, getClosestSources, getSources}

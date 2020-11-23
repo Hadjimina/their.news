@@ -2,7 +2,6 @@ import React from 'react';
 import './story.css';
 import Moment from 'react-moment';
 import 'moment-timezone';
-import * as Constants from "../..//constants.js"
 import { utils } from '../../helpers';
 
 function SearchBox(props) {
@@ -13,7 +12,8 @@ function SearchBox(props) {
   }
 
  const date = Date.parse(props.article.published_date)/1000
- const siteTitleFromURL =  utils.getSourceTitleByURL(Constants.sources)
+ console.log("props.country");
+ const siteTitleFromURL =  utils.getSourceTitleByURL(utils.getSources(props.country))
  const verticalBorderRight = [0, 2, 3]
 
  console.log();
@@ -60,7 +60,7 @@ function SearchBox(props) {
         </div>
 
         <div className="details newsoutlet" onClick={()=>{openLink("http://"+props.article.clean_url)}}>
-          {props.article.author && props.article.author.length+siteTitleFromURL[props.article.clean_url].length < 25 ? props.article.author +" / ":""}{siteTitleFromURL[props.article.clean_url]}
+          {props.article.author && siteTitleFromURL[props.article.clean_url] && props.article.author.length+siteTitleFromURL[props.article.clean_url].length < 25 ? props.article.author +" / ":""}{siteTitleFromURL[props.article.clean_url]}
         </div>
 
       </div>
