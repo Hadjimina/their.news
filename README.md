@@ -6,7 +6,7 @@ The Goal of this project is to build a website where you can find news that chal
 
 ## Website
 
-### [Accessible here](https://perspective.news)
+### [Accessible here](https://their.news)
 Website might be temporarily down
 
 In order to achieve this goal, a website will be built which, first detects roughly your existing political standing and then presents you with news articles from the other side of the spectrum.
