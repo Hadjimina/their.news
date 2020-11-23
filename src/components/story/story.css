@@ -26,13 +26,21 @@
   display: flex;
   flex:1;
   max-height: 95%;
+}
 
+.textImageWrapper:hover{
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .details{
   color: #c6c8cc;
   font-style: italic;
+}
 
+.newsoutlet:hover{
+  text-decoration: underline;
+  cursor: pointer;
 }
 #title{
   display: -webkit-box;
@@ -65,6 +73,7 @@
 .fill{
   flex:1;
 }
+
 /* .fill {
     padding-left:  8px;
     flex:1;

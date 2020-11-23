@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {BiasSlider, SearchBox, Story} from "./components"
 import * as Constants from "./constants.js"
+import { utils } from './helpers';
 import './App.css';
 import ReactGA from 'react-ga';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faExclamation } from '@fortawesome/free-solid-svg-icons'
+import ReactFlagsSelect from 'react-flags-select';
+import 'react-flags-select/css/react-flags-select.css';
 
 const rows = [0,2,4]
 const getWidth = () => window.innerWidth
@@ -12,10 +16,16 @@ const getWidth = () => window.innerWidth
 
 // <Story key={index} article={article}/>
 function App() {
-  const [sources, setSources] = useState([]);
+  const [sources, setSources] = useState(utils.getClosestSources(3,0));
   const [search, setSearch] = useState();
-  const [articles, setArticles] = useState([]);
+  const [articles, setArticles] = useState(["srf.ch"]);
   const [mobile, setMobile] = useState(getWidth()<800);
+  const [receivedFlag, setReceivedFlage] = useState(false)
+
+  const initialValueSlider = Math.floor((Math.random() * 84))-42;
+  const initialValueSearch = Constants.featuredTopics[Math.floor(Math.random() * Constants.featuredTopics.length)];
+  const countries = ["US", "CH", "CY"]
+  const countrySelectorRef = useRef();
 
   const sourceUpdateHandler = (sourceFromSlider) => {
 
@@ -30,25 +40,39 @@ function App() {
     }
   }
 
+  //onetime only
+  useEffect(() => {
+    fetch('https://extreme-ip-lookup.com/json/')
+     .then( res => res.json())
+     .then(response => {
+       var country = response.countryCode
+       if (countries.includes(country)){
+         countrySelectorRef.current.updateSelected(country)
+       }
+     })
+     .catch((data, status) => {
+       console.log('Request failed:', data);
+     });
+
+     let timeoutId = null;
+     const resizeListener = () => {
+       clearTimeout(timeoutId);
+       timeoutId = setTimeout(() => setMobile(getWidth()<800), 0);
+     };
+     // set resize listener
+     window.addEventListener('resize', resizeListener);
+
+
+     return () => {
+       window.removeEventListener('resize', resizeListener);
+     }
+   }, []);
 
   useEffect(() => {
-      let timeoutId = null;
-      const resizeListener = () => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => setMobile(getWidth()<800), 0);
-      };
-      // set resize listener
-      window.addEventListener('resize', resizeListener);
-
       getNews().then(data => {
-        console.log(data);
         setArticles(data.articles)
+        setReceivedFlage(true)
       });
-
-
-      return () => {
-        window.removeEventListener('resize', resizeListener);
-      }
     },[sources, search]
   );
 
@@ -72,7 +96,7 @@ function App() {
 
       data = {
         ...data,
-        "q": Constants.featuredTopics[Math.floor(Math.random() * Constants.featuredTopics.length)],
+        "q": initialValueSearch,
       }
     }
 
@@ -103,7 +127,6 @@ function App() {
     margin: "auto",
     paddingTop:"16px",
     maxWidth:"100%",
-
     };
 
   const darkHR ={
@@ -118,24 +141,38 @@ function App() {
     height: "1px"
   }
 
+  const tooManyWrapper = {
+    width:"100%",
+    textAlign:"center"
+  }
 
+  const countrySelection = {
+    
+  }
   return (
       <div style={wrapper}>
+
         <h1 style={{fontSize:"5rem", textAlign:"center"}}>
           Their News
         </h1>
+        <div style={countrySelection}>
+          <ReactFlagsSelect
+            defaultCountry={countries[Math.floor(Math.random() * countries.length)]}
+           ref={countrySelectorRef}
+           countries={countries} />
+        </div>
         <hr style={darkHR}/>
         <div className ="components">
           <h3 style={{fontSize: "2.5rem", textAlign:"center"}}>
-            Your polictical compass
+            Choose a political bias for your news
           </h3>
-          <BiasSlider mobile={mobile} updateSources={sourceUpdateHandler}/>
-          <SearchBox mobile={mobile} updateSearch={searchUpdateHandler}/>
+          <BiasSlider mobile={mobile} updateSources={sourceUpdateHandler} initialValue={initialValueSlider}/>
+          <SearchBox mobile={mobile} updateSearch={searchUpdateHandler} initialValue={initialValueSearch}/>
         </div>
         <hr style={lightHR}/>
 
         <div id="parent">
-          {articles.map((article, index) =>
+          {articles && articles.length > 0&& articles.map((article, index) =>
             <div key={index} style={
               mobile ? {flex: index==0 ? "2 0 100%" : "1 0 100%"} : {flex: index==0 ? "2 0 62%" : "1 0 31%" }}>
               <Story key={index} article={article} index={index}
@@ -144,9 +181,17 @@ function App() {
                   mobile={mobile}/>
             </div>
           )}
+          {!(articles && articles.length > 0)&& receivedFlag&&
+            <div style={tooManyWrapper}>
+              <FontAwesomeIcon icon={faExclamation} style={{marginBottom:"16px", fontSize:"10rem"}}/>
+              <h2> Too many requests </h2>
+              <p> Unfortuantely there have been to many requests to <strong>Their.news</strong> recently.<br/>
+              This should be fixed in approximately 1 hour.</p>
+            </div>}
 
 
         </div>
+
       </div>
     );
 

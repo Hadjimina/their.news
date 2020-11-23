@@ -7,14 +7,16 @@ import { utils } from '../../helpers';
 
 function SearchBox(props) {
 
-  const openArticle=()=>{
-    window.open(props.article.link, "_blank")
+  const openLink=(link)=>{
+    console.log(link);
+     window.open(link, "_blank")
   }
 
  const date = Date.parse(props.article.published_date)/1000
  const siteTitleFromURL =  utils.getSourceTitleByURL(Constants.sources)
  const verticalBorderRight = [0, 2, 3]
 
+ console.log();
  const clampStyleThree = {
      maxWidth: '100%',
      display: '-webkit-box',
@@ -32,11 +34,11 @@ function SearchBox(props) {
        overflow: 'hidden',
        textOverflow: 'ellipsis',
    };
-// TODO: border length
+
   return (
     <div className="storyWrapper" style={!props.mobile && verticalBorderRight.includes(props.index)? {borderRight: "1px solid #dfe1e5"} :{}}>
       {(props.minor || props.mobile)  &&<h3 id="title" style={ props.mobile ? {} : clampStyleThree}> {props.article.title} </h3>}
-      <div className="textImageWrapper" style={props.mobile ? {flexDirection:"column-reverse"}:{flexDirection:"row"} }onClick={openArticle}>
+      <div className="textImageWrapper" style={props.mobile ? {flexDirection:"column-reverse"}:{flexDirection:"row"}} onClick={()=>{openLink(props.article.link)}}>
 
         <div className="text">
           {!props.minor && !props.mobile && <h3 id="title" style={ props.mobile ? {} : clampStyleThree}> {props.article.title} </h3>}
@@ -52,12 +54,12 @@ function SearchBox(props) {
 
       </div>
 
-      <div className="sourceDateWrapper" onClick={openArticle}>
+      <div className="sourceDateWrapper" >
         <div className="details">
           <Moment unix fromNow>{date}</Moment>
         </div>
 
-        <div className="details">
+        <div className="details newsoutlet" onClick={()=>{openLink("http://"+props.article.clean_url)}}>
           {props.article.author && props.article.author.length+siteTitleFromURL[props.article.clean_url].length < 25 ? props.article.author +" / ":""}{siteTitleFromURL[props.article.clean_url]}
         </div>
 

@@ -4,8 +4,9 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import './SearchBox.css';
 
 function SearchBox(props) {
-  const [search, setSearch] = useState();
+  const [search, setSearch] = useState(props.initialValue);
 
+  console.log(props.initialValue);
   const changeSearch = (e) =>{
     setSearch(e.target.value)
   }
@@ -40,6 +41,7 @@ function SearchBox(props) {
     <div  style={wrapper}>
       <FontAwesomeIcon icon={faSearch} style={{marginRight:"-40px", color:"rgb(154, 160, 166)", fontSize:"1.5rem"}}/>
       <input type="text"className ="wrapper"
+        value={search}
         style={inputStyle}
         onChange = {changeSearch}
         onFocusOut = {updateSearch}
