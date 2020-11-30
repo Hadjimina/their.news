@@ -48,19 +48,24 @@ function App() {
 
   //onetime only
   useEffect(() => {
+    var currentCountry = null;
     fetch('https://extreme-ip-lookup.com/json/')
      .then( res => res.json())
      .then(response => {
-       var currentCountry = response.countryCode
+       currentCountry = response.countryCode
+     })
+     .catch((data, status) => {
+       //This is very bad...but works
+       if(data == "TypeError: Failed to fetch"){
+         currentCountry = "US"
+       }
+     }).finally(()=>{
        if (countries.includes(currentCountry)){
          countrySelectorRef.current.updateSelected(currentCountry)
          setCountry(currentCountry)
          // FIXME: set sources amount to 2 for CH sources
          setSources(utils.getClosestSources(3,0, currentCountry))
        }
-     })
-     .catch((data, status) => {
-       console.log('Request failed:', data);
      });
 
      let timeoutId = null;
