@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {BiasSlider, SearchBox, Story} from "./components"
-import * as Constants from "./constants.js"
 import { utils } from './helpers';
 import './App.css';
 import ReactGA from 'react-ga';
@@ -27,7 +26,8 @@ function App() {
   const [country, setCountry] = useState("US")
 
   const initialValueSlider = Math.floor((Math.random() * 84))-42;
-  const initialValueSearch = Constants.featuredTopics[Math.floor(Math.random() * Constants.featuredTopics.length)];
+  var topics = utils.getTopics(country)
+  const initialValueSearch = topics[Math.floor(Math.random() * topics.length)];
 
 
   const sourceUpdateHandler = (sourceFromSlider) => {
@@ -56,7 +56,7 @@ function App() {
      })
      .catch((data, status) => {
        //This is very bad...but works
-       if(data == "TypeError: Failed to fetch"){
+       if(data === "TypeError: Failed to fetch"){
          currentCountry = "US"
        }
      }).finally(()=>{
@@ -116,6 +116,7 @@ function App() {
       	"q": search,
       }
     }else{
+
 
       data = {
         ...data,
@@ -191,12 +192,12 @@ function App() {
             onSelect={(countryCode)=>{setCountry(countryCode)}}/>
         </div>
 
-        <h3>🚧 {country=="US"?"Work in progress":"Laufende Arbeit"} 🚧</h3>
+        <h3>🚧 {country==="US"?"Work in progress":"Laufende Arbeit"} 🚧</h3>
 
         <hr style={darkHR}/>
         <div className ="components">
           <h3 style={{fontSize: "2.5rem", textAlign:"center"}}>
-            {country == "US" ? "Choose a political bias for your news":"Wählen Sie die Einstellung Ihrer Nachrichten"}
+            {country === "US" ? "Choose a political bias for your news":"Wählen Sie die Einstellung Ihrer Nachrichten"}
           </h3>
           <BiasSlider mobile={mobile} updateSources={sourceUpdateHandler} initialValue={initialValueSlider} country={country}/>
           <SearchBox mobile={mobile} updateSearch={searchUpdateHandler} initialValue={initialValueSearch} country={country}/>

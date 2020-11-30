@@ -7,16 +7,14 @@ import { utils } from '../../helpers';
 function SearchBox(props) {
 
   const openLink=(link)=>{
-    console.log(link);
      window.open(link, "_blank")
   }
 
  const date = Date.parse(props.article.published_date)/1000
- console.log("props.country");
  const siteTitleFromURL =  utils.getSourceTitleByURL(utils.getSources(props.country))
  const verticalBorderRight = [0, 2, 3]
 
- console.log();
+
  const clampStyleThree = {
      maxWidth: '100%',
      display: '-webkit-box',

@@ -6,7 +6,6 @@ import './SearchBox.css';
 function SearchBox(props) {
   const [search, setSearch] = useState(props.initialValue);
 
-  console.log(props.initialValue);
   const changeSearch = (e) =>{
     setSearch(e.target.value)
   }

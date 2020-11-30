@@ -9,4 +9,7 @@ export const CH_Sources = [{'name': 'SRF', 'link': 'srf.ch', 'bias': 0.152, 'rel
 {'name': '24 heures', 'link': '24heures.ch', 'bias': -21.246, 'reliability': 0, 'imageUrl': 'Todo'},
 {'name': 'la Regione', 'link': 'laregione.ch', 'bias': -21.101, 'reliability': 0, 'imageUrl': 'Todo'}]
 
-export const featuredTopics =["Trump",]
+
+// TODO: fix topics per country
+export const CH_Topics =["Trump",]
+export const US_Topics =["Trump",]

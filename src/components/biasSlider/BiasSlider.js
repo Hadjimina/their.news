@@ -11,7 +11,6 @@ function BiasSlider(props) {
 
   const updateSources = () => {
     var i = 5
-    console.log("valueee", value);
     var sources = utils.getClosestSources(i, value, props.country)
 
     while (sources == null) {
@@ -26,8 +25,8 @@ function BiasSlider(props) {
   useEffect(updateSources,[]);
 
   const sliderLabels = props.mobile?(
-    props.country == "US"?[" ", "Left", " ", " ",  "Right", " "]:["Links", " ", " ","Rechts"]):
-   (props.country == "US"?["Extreme Left", "Left", "Skews Left", "Skews Right","Right", "Extreme Right"]: ["Links", "Leicht Links", "Leicht Rechts",
+    props.country === "US"?[" ", "Left", " ", " ",  "Right", " "]:["Links", " ", " ","Rechts"]):
+   (props.country === "US"?["Extreme Left", "Left", "Skews Left", "Skews Right","Right", "Extreme Right"]: ["Links", "Leicht Links", "Leicht Rechts",
    "Rechts"])
 
 
