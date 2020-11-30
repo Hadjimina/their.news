@@ -31,22 +31,32 @@ function SearchBox(props) {
        WebkitLineClamp: 10,
        overflow: 'hidden',
        textOverflow: 'ellipsis',
+       color:"pink"
    };
 
   return (
-    <div className="storyWrapper" style={!props.mobile && verticalBorderRight.includes(props.index)? {borderRight: "1px solid #dfe1e5"} :{}}>
-      {(props.minor || props.mobile)  &&<h3 id="title" style={ props.mobile ? {} : clampStyleThree}> {props.article.title} </h3>}
+    <div  className="storyWrapper"
+          style={!props.mobile && verticalBorderRight.includes(props.index)? {borderRight: "0.0625em solid #dfe1e5"} :{}}>
+
+      {(props.minor || props.mobile)  &&
+          <h3 id="title" style={ props.mobile ? {} : clampStyleThree}> {props.article.title}   </h3>
+
+      }
       <div className="textImageWrapper" style={props.mobile ? {flexDirection:"column-reverse"}:{flexDirection:"row"}} onClick={()=>{openLink(props.article.link)}}>
 
         <div className="text">
-          {!props.minor && !props.mobile && <h3 id="title" style={ props.mobile ? {} : clampStyleThree}> {props.article.title} </h3>}
-          <p id="article" style={ props.mobile ? {} : clampStyleTen}>{props.article.summary} </p>
+          {!props.minor && !props.mobile &&
+            <h3 id="title" style={ props.mobile ? {} : clampStyleThree}> {props.article.title} </h3>
+          }
+
+          <p id="article" style={ props.mobile ? {} : clampStyleTen}>{props.article.summary} HELLO</p>
         </div>
 
         {props.article.media != null   && props.showImage &&
-        <div className="fill">
-          <img src={props.article.media} style={{objectFit: "contain", maxWidth:"100%",maxHeight:"100%", marginBottom:"8px"}}alt="html cleaner"/>
-        </div>}
+          <div className="fill">
+            <img src={props.article.media} style={{objectFit: "contain", maxWidth:"100%",maxHeight:"100%", marginBottom:"0.5em"}}alt="html cleaner"/>
+          </div>
+        }
 
 
 

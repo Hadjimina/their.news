@@ -96,7 +96,7 @@ function App() {
 
 // FIXME: search function is very odd & called multiple times
   async function getNews() {
-
+    console.log("Getting news");
     var url = new URL("https://newscatcher.p.rapidapi.com/v1/search")
     var data = {
 
@@ -150,20 +150,20 @@ function App() {
     alignItems:"center",
     width:"80rem",
     margin: "auto",
-    paddingTop:"16px",
+    paddingTop:"1em",
     maxWidth:"100%",
     };
 
   const darkHR ={
     width:"100%",
     backgroundColor:"#000000",
-    height: "1px"
+    height: "0.0625em"
   }
 
   const lightHR = {
     width:"100%",
     backgroundColor:"#dfe1e5",
-    height: "1px"
+    height: "0.0625em"
   }
 
   const tooManyWrapper = {
@@ -216,7 +216,7 @@ function App() {
           )}
           {!(articles && articles.length > 0)&& receivedFlag&&
             <div style={tooManyWrapper}>
-              <FontAwesomeIcon icon={faExclamation} style={{marginBottom:"16px", fontSize:"10rem"}}/>
+              <FontAwesomeIcon icon={faExclamation} style={{marginBottom:"1em", fontSize:"10rem"}}/>
               <h2> Too many requests </h2>
               <p> Unfortuantely there have been to many requests to <strong>Their.news</strong> recently.<br/>
               This should be fixed in approximately 1 hour.</p>

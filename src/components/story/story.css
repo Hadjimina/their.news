@@ -1,11 +1,9 @@
 .storyWrapper{
-  /* border-right-width: 2px;
-  border-right-style: solid;
-  border-right-color: #dfe1e5; */
-  border-bottom-width: 2px;
+
+  border-bottom-width: 0.125em;
   border-bottom-style: solid;
   border-bottom-color: #dfe1e5;
-  padding: 16px 16px 0px 16px;
+  padding: 1em 1em 0em 1em;
   flex:1;
   width: 100%;
   height: 100%;
@@ -48,7 +46,7 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-bottom: 24px;
+  margin-bottom: 1.5em;
 }
 #article{
   display: -webkit-box;
@@ -56,13 +54,13 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-right: 16px;
+  margin-right: 1em;
 }
 
 .text{
   flex:1;
   overflow: auto;
-  margin-bottom: 16px;
+  margin-bottom: 1em;
   overflow: hidden;
 }
 
@@ -73,19 +71,3 @@
 .fill{
   flex:1;
 }
-
-/* .fill {
-    padding-left:  8px;
-    flex:1;
-    object-fit: contain;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden
-}
-
-.fill img {
-    flex-shrink: 0;
-    min-width: 100%;
-    min-height: 100%
-} */

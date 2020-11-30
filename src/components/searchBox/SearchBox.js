@@ -19,13 +19,13 @@ function SearchBox(props) {
   const inputStyle={
     backgroundColor: "transparent",
     width:"100%",
-    height:"60px",
+    height:"3.75em",
     fontSize:"1.5rem",
-    border: "1px solid #dfe1e5",
+    border: "0.0625em solid #dfe1e5",
     color: "#222",
-    padding: "10px 50px",
+    padding: "0.625em 3.125em",
     display: "inline-block",
-    borderRadius: "30px",
+    borderRadius: "1.875em",
     outline: "none",
   }
 
@@ -34,16 +34,21 @@ function SearchBox(props) {
     display:"flex",
     justifyContent:"center",
     alignItems:"center",
-    paddingBottom: "16px"
+    paddingBottom: "1em",
+  }
+
+  const input={
+
+
   }
   return (
     <div  style={wrapper}>
-      <FontAwesomeIcon icon={faSearch} style={{marginRight:"-40px", color:"rgb(154, 160, 166)", fontSize:"1.5rem"}}/>
-      <input type="text"className ="wrapper"
+      <FontAwesomeIcon icon={faSearch} style={{marginRight:"-2.5em", color:"rgb(154, 160, 166)", fontSize:"1.5rem"}}/>
+      <input type="text" style={{marginLeft:"3000px"}}
         value={search}
         style={inputStyle}
         onChange = {changeSearch}
-        onFocusOut = {updateSearch}
+        onBlur = {updateSearch}
         onKeyPress = {updateSearch}/>
     </div>
   );
