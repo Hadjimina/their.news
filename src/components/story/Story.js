@@ -39,7 +39,11 @@ function SearchBox(props) {
 
   return (
     <div  className={fade ? 'storyWrapper fade' : 'storyWrapper'}
-          onAnimationEnd={() => {setFade(false)}}
+          onAnimationEnd={() => {
+            if(props.article.media == null || !props.showImage){
+                setFade(false)}
+            }
+          }
           style={!props.mobile && verticalBorderRight.includes(props.index)? {borderRight: "0.0625em solid #dfe1e5"} :{}}>
 
       {(props.minor || props.mobile)  &&
@@ -58,7 +62,8 @@ function SearchBox(props) {
 
         {props.article.media != null   && props.showImage &&
           <div className="fill">
-            <img src={props.article.media} style={{objectFit: "contain", maxWidth:"100%",maxHeight:"100%", marginBottom:"0.5em"}}alt="html cleaner"/>
+            <img src={props.article.media} style={{objectFit: "contain", maxWidth:"100%",maxHeight:"100%", marginBottom:"0.5em"}}alt="html cleaner"
+              onLoad={() => {setFade(false)}}/>
           </div>
         }
 

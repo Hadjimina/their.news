@@ -73,7 +73,7 @@
 }
 
 .fade {
-  animation: fade-in-keyframes 0.5s;
+  animation: fade-in-keyframes 3s;
 }
 @keyframes fade-in-keyframes {
   from {opacity: 0}
