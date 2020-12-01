@@ -9,6 +9,7 @@ import ReactFlagsSelect from 'react-flags-select';
 import 'react-flags-select/css/react-flags-select.css';
 import {Helmet} from 'react-helmet'
 
+
 const getWidth = () => window.innerWidth
   || document.documentElement.clientWidth
   || document.body.clientWidth;
@@ -57,9 +58,9 @@ function App() {
      })
      .catch((data, status) => {
        //This is very bad...but works
-       if(data === "TypeError: Failed to fetch"){
+       // if(data === "TypeError: Failed to fetch"){
          currentCountry = "US"
-       }
+       // }
      }).finally(()=>{
        if (countries.includes(currentCountry)){
          countrySelectorRef.current.updateSelected(currentCountry)
@@ -209,6 +210,7 @@ function App() {
         <hr style={lightHR}/>
 
         <div id="parent">
+
           {articles && articles.length > 0 && articles.map((article, index) =>
             <div key={index} style={
               mobile ? {flex: index===0 ? "2 0 100%" : "1 0 100%"} : {flex: index===0 ? "2 0 62%" : "1 0 31%" }}>

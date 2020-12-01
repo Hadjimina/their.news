@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './story.css';
 import Moment from 'react-moment';
 import 'moment-timezone';
@@ -13,6 +13,8 @@ function SearchBox(props) {
  const date = Date.parse(props.article.published_date)/1000
  const siteTitleFromURL =  utils.getSourceTitleByURL(utils.getSources(props.country))
  const verticalBorderRight = [0, 2, 3]
+
+ useEffect(() => console.log('value changed!'+props.index), [props.article.summary]);
 
 
  const clampStyleThree = {
@@ -31,11 +33,11 @@ function SearchBox(props) {
        WebkitLineClamp: 10,
        overflow: 'hidden',
        textOverflow: 'ellipsis',
-       color:"pink"
+
    };
 
   return (
-    <div  className="storyWrapper"
+    <div  className="storyWrapper fadeOut"
           style={!props.mobile && verticalBorderRight.includes(props.index)? {borderRight: "0.0625em solid #dfe1e5"} :{}}>
 
       {(props.minor || props.mobile)  &&
