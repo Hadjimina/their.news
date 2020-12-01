@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import './story.css';
 import Moment from 'react-moment';
 import 'moment-timezone';
@@ -10,11 +10,12 @@ function SearchBox(props) {
      window.open(link, "_blank")
   }
 
+ const [fade, setFade] = useState(false);
  const date = Date.parse(props.article.published_date)/1000
  const siteTitleFromURL =  utils.getSourceTitleByURL(utils.getSources(props.country))
  const verticalBorderRight = [0, 2, 3]
 
- useEffect(() => console.log('value changed!'+props.index), [props.article.summary]);
+ useEffect(() => {setFade(true)}, [props.article.summary]);
 
 
  const clampStyleThree = {
@@ -37,7 +38,8 @@ function SearchBox(props) {
    };
 
   return (
-    <div  className="storyWrapper fadeOut"
+    <div  className={fade ? 'storyWrapper fade' : 'storyWrapper'}
+          onAnimationEnd={() => {setFade(false)}}
           style={!props.mobile && verticalBorderRight.includes(props.index)? {borderRight: "0.0625em solid #dfe1e5"} :{}}>
 
       {(props.minor || props.mobile)  &&
