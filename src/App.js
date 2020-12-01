@@ -13,7 +13,8 @@ const getWidth = () => window.innerWidth
   || document.documentElement.clientWidth
   || document.body.clientWidth;
 
-// <Story key={index} article={article}/>
+const mobileThreshold = 800;
+
 function App() {
   const countries = ["US", "CH"]
   const countrySelectorRef = useRef();
@@ -21,7 +22,7 @@ function App() {
   const [sources, setSources] = useState();
   const [search, setSearch] = useState();
   const [articles, setArticles] = useState();
-  const [mobile, setMobile] = useState(getWidth()<800);
+  const [mobile, setMobile] = useState(getWidth()<mobileThreshold);
   const [receivedFlag, setReceivedFlage] = useState(false)
   const [country, setCountry] = useState("US")
 
@@ -65,13 +66,14 @@ function App() {
          setCountry(currentCountry)
          // FIXME: set sources amount to 2 for CH sources
          setSources(utils.getClosestSources(3,0, currentCountry))
+         console.log("sources set");
        }
      });
 
      let timeoutId = null;
      const resizeListener = () => {
        clearTimeout(timeoutId);
-       timeoutId = setTimeout(() => setMobile(getWidth()<800), 0);
+       timeoutId = setTimeout(() => setMobile(getWidth()<mobileThreshold), 0);
      };
      // set resize listener
      window.addEventListener('resize', resizeListener);
@@ -83,6 +85,8 @@ function App() {
    }, []);
 
   useEffect(() => {
+      console.log("useEffectd");
+      console.log(sources);
       if (!sources){
         return
       }
@@ -180,7 +184,7 @@ function App() {
           <title>Their News: Escape your bubble</title>
           <meta name="description" content="Break out of your political bubble by reading news from the entire political spectrum" />
         </Helmet>
-        <h1 style={{fontSize:"5rem", textAlign:"center"}}>
+        <h1 style={{fontSize:"4rem", textAlign:"center"}}>
           Their News
         </h1>
 
@@ -192,12 +196,12 @@ function App() {
             onSelect={(countryCode)=>{setCountry(countryCode)}}/>
         </div>
 
-        <h3>🚧 {country==="US"?"Work in progress":"Laufende Arbeit"} 🚧</h3>
+        <h3>🚧 Work in progress 🚧</h3>
 
         <hr style={darkHR}/>
         <div className ="components">
-          <h3 style={{fontSize: "2.5rem", textAlign:"center"}}>
-            {country === "US" ? "Choose a political bias for your news":"Wählen Sie die Einstellung Ihrer Nachrichten"}
+          <h3 style={{fontSize: "2rem", textAlign:"center"}}>
+            {country === "US" ? "Choose a political bias for your news":"Wählen Sie die Orientierung Ihrer Nachrichten"}
           </h3>
           <BiasSlider mobile={mobile} updateSources={sourceUpdateHandler} initialValue={initialValueSlider} country={country}/>
           <SearchBox mobile={mobile} updateSearch={searchUpdateHandler} initialValue={initialValueSearch} country={country}/>
@@ -205,7 +209,7 @@ function App() {
         <hr style={lightHR}/>
 
         <div id="parent">
-          {articles && articles.length > 0&& articles.map((article, index) =>
+          {articles && articles.length > 0 && articles.map((article, index) =>
             <div key={index} style={
               mobile ? {flex: index===0 ? "2 0 100%" : "1 0 100%"} : {flex: index===0 ? "2 0 62%" : "1 0 31%" }}>
               <Story key={index} article={article} index={index} country={country}
@@ -214,12 +218,16 @@ function App() {
                   mobile={mobile}/>
             </div>
           )}
-          {!(articles && articles.length > 0)&& receivedFlag&&
+          {!(articles && articles.length > 0)&& receivedFlag &&
             <div style={tooManyWrapper}>
-              <FontAwesomeIcon icon={faExclamation} style={{marginBottom:"1em", fontSize:"10rem"}}/>
-              <h2> Too many requests </h2>
-              <p> Unfortuantely there have been to many requests to <strong>Their.news</strong> recently.<br/>
-              This should be fixed in approximately 1 hour.</p>
+              <FontAwesomeIcon icon={faExclamation} style={{marginBottom:"0.25em", fontSize:"10rem"}}/>
+              <h2> {country === "US?"? "Too many requests": "Zu viele Anfragen"} </h2>
+              {country === "US?"?
+                <p> Unfortuantely there have been to many requests to <strong>Their.news</strong> recently.<br/>
+                  This should resolve itself automatically in approximately 1 hour.</p>:
+                <p> Leider gab es in letzter Zeit zu viele Anfragen an <strong>Their.news</strong>. <br/>
+                  Dies sollte sich in etwa 1 Stunde automatisch auflösen.</p>}
+
             </div>}
 
 

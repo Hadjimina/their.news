@@ -18,23 +18,23 @@ function SearchBox(props) {
 
   const inputStyle={
     backgroundColor: "transparent",
-    width:"100%",
-    height:"3.75em",
+    width:"80%",
+    height:"2.75em",
     fontSize:"1.5rem",
-    border: "0.0625em solid #dfe1e5",
-    color: "#222",
-    padding: "0.625em 3.125em",
-    display: "inline-block",
-    borderRadius: "1.875em",
+    border: "0em",
+    marginLeft:"0.25em",
     outline: "none",
   }
 
   const wrapper={
     width:"100%",
-    display:"flex",
     justifyContent:"center",
     alignItems:"center",
-    paddingBottom: "1em",
+    paddingLeft:"0.75em",
+    marginBottom: "1em",
+    borderRadius: "1.9em",
+    border: "0.0625em solid #dfe1e5",
+    display: "inline-block",
   }
 
   const input={
@@ -43,8 +43,8 @@ function SearchBox(props) {
   }
   return (
     <div  style={wrapper}>
-      <FontAwesomeIcon icon={faSearch} style={{marginRight:"-2.5em", color:"rgb(154, 160, 166)", fontSize:"1.5rem"}}/>
-      <input type="text" style={{marginLeft:"3000px"}}
+      <FontAwesomeIcon icon={faSearch} style={{ color:"rgb(154, 160, 166)", fontSize:"1.5rem"}}/>
+      <input type="text"
         value={search}
         style={inputStyle}
         onChange = {changeSearch}

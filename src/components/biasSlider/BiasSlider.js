@@ -31,7 +31,7 @@ function BiasSlider(props) {
 
 
   return (
-    <div style={{width:"100%", backgroundColor:"white", marginTop:"0.5em", marginBottom:"0.5em"}}>
+    <div style={{width:"100%", backgroundColor:"transparent", marginTop:"0.5em", marginBottom:"0.5em"}}>
       <div className ="labels">
         {sliderLabels.map((label, index)=><div key={index}>{label}</div>)}
       </div>

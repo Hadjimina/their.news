@@ -1,3 +1,4 @@
 .wrapper:hover {
-  box-shadow: 0 0.125em 0.250em 0 rgba(0, 0, 0, 0.2);
+  /* not working */
+  box-shadow: 0 2.125em 2.250em 0 rgba(0, 0, 0, 0.2);
 }
