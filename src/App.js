@@ -226,7 +226,7 @@ function App() {
                 <p> Unfortuantely there have been to many requests to <strong>Their.news</strong> recently.<br/>
                   This should resolve itself automatically in approximately 1 hour.</p>:
                 <p> Leider gab es in letzter Zeit zu viele Anfragen an <strong>Their.news</strong>. <br/>
-                  Dies sollte sich in etwa 1 Stunde automatisch auflösen.</p>}
+                  Dies sollte sich in etwa einer Stunde automatisch auflösen.</p>}
 
             </div>}
 
