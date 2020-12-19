@@ -17,6 +17,9 @@ The media bias chart from [adfontesmedia](https://www.adfontesmedia.com/download
 | ![](mediaChartUS.png)  | ![](mediaChartCH.jpg)       |
 
 
+### What do the emojis mean?
+The emojis represent a simple sentiment analysis which analyses a preview of the article and gives a score about how positive (score > 0.66), or how negative (score < 0.33) the article is. Since this is far from perfect, the emojis should be taken with a grain of salt.
+
 ## Support me
 
 <a href="https://www.buymeacoffee.com/hadjimina" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
