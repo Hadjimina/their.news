@@ -10,6 +10,12 @@ export const CH_Sources = [{'name': 'SRF', 'link': 'srf.ch', 'bias': 0.152, 'rel
 {'name': 'la Regione', 'link': 'laregione.ch', 'bias': -21.101, 'reliability': 0, 'imageUrl': 'Todo'}]
 
 
-// TODO: fix topics per country
 export const CH_Topics =["Bildungswesen","Corona", "Covid", "EU", "Brexit", "Wirtschaft", "Trump", "Biden", "Klimaschutz", "Terror", "Impfung"]
 export const US_Topics =["Trump", "Biden", "Corona", "Covid", "Abortion", "Gun control", "Vaccines", "Capitalism", "Climate change", "Immigration", "Transgender", "White supremacy", "Black Lives Matter"]
+
+//sentiment thresholds
+export const SENTIMENT_THRESHOLD = {
+    pos: 0.66,
+    neu: 0.33,
+    neg: 0
+}

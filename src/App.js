@@ -4,7 +4,7 @@ import { utils } from './helpers';
 import './App.css';
 import ReactGA from 'react-ga';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-
+import * as tf from '@tensorflow/tfjs';
 import ReactFlagsSelect from 'react-flags-select';
 import 'react-flags-select/css/react-flags-select.css';
 import {Helmet} from 'react-helmet'
@@ -13,12 +13,24 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { faExclamation } from '@fortawesome/free-solid-svg-icons'
 import { faQuestion } from '@fortawesome/free-solid-svg-icons'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
+import { faRandom } from '@fortawesome/free-solid-svg-icons'
 
 const getWidth = () => window.innerWidth
   || document.documentElement.clientWidth
   || document.body.clientWidth;
 
 const mobileThreshold = 800;
+
+
+var model, metadata;
+const PAD_INDEX = 0;
+const OOV_INDEX = 2;
+const urls = {
+    model: 'https://storage.googleapis.com/tfjs-models/tfjs/sentiment_cnn_v1/model.json',
+    metadata: 'https://storage.googleapis.com/tfjs-models/tfjs/sentiment_cnn_v1/metadata.json'
+};
+
+
 
 function App() {
   const countries = ["US", "CH"]
@@ -53,14 +65,91 @@ function App() {
   }
 
   const changeSearch = (e) =>{
-
     setTempSearch(e.target.value)
   }
 
+  //SENTIMENT******************** START
+  async function setupSentimentModel(){
+    if(typeof model === 'undefined'){
+        model = await loadModel(urls.model);
+    }
+    if(typeof metadata === 'undefined'){
+        metadata = await loadMetadata(urls.metadata);
+    }
+  }
 
+  function padSequences(sequences, maxLen, padding = 'pre', truncating = 'pre', value = PAD_INDEX) {
+    return sequences.map(seq => {
+      if (seq.length > maxLen) {
+        if (truncating === 'pre') {
+          seq.splice(0, seq.length - maxLen);
+        } else {
+          seq.splice(maxLen, seq.length - maxLen);
+        }
+      }
+
+      if (seq.length < maxLen) {
+        const pad = [];
+        for (let i = 0; i < maxLen - seq.length; ++i) {
+          pad.push(value);
+        }
+        if (padding === 'pre') {
+          seq = pad.concat(seq);
+        } else {
+          seq = seq.concat(pad);
+        }
+      }
+
+      return seq;
+    });
+  }
+
+  function getSentimentScore(text) {
+    const inputText = text.trim().toLowerCase().replace(/(\.|\,|\!)/g, '').split(' ');
+    // Convert the words to a sequence of word indices.
+    const sequence = inputText.map(word => {
+      let wordIndex = metadata.word_index[word] + metadata.index_from;
+      if (wordIndex > metadata.vocabulary_size) {
+        wordIndex = OOV_INDEX;
+      }
+      return wordIndex;
+    });
+    // Perform truncation and padding.
+    const paddedSequence = padSequences([sequence], metadata.max_len);
+    const input = tf.tensor2d(paddedSequence, [1, metadata.max_len]);
+
+    const predictOut = model.predict(input);
+    const score = predictOut.dataSync()[0];
+    predictOut.dispose();
+
+    return score;
+}
+
+  async function loadModel(url) {
+      try {
+          const model = await tf.loadLayersModel(url);
+          return model;
+      } catch (err) {
+          console.log(err);
+      }
+  }
+
+  async function loadMetadata(url) {
+      try {
+          const metadataJson = await fetch(url);
+          const metadata = await metadataJson.json();
+          return metadata;
+      } catch (err) {
+          console.log(err);
+      }
+  }
+
+
+//SENTIMENT********************** DONE
 
   function setCountryAndSources(currentCountry){
     setCountry(currentCountry)
+    countrySelectorRef.current.updateSelected(currentCountry)
     let sourceAmount = currentCountry === "US" ? 4: 2
     setSources(utils.getClosestSources(sourceAmount,0, currentCountry))
     var topics = utils.getTopics(currentCountry)
@@ -84,7 +173,6 @@ function App() {
        // }
      }).finally(()=>{
        if (countries.includes(currentCountry)){
-         countrySelectorRef.current.updateSelected(currentCountry)
          setCountryAndSources(currentCountry)
 
        }
@@ -105,22 +193,35 @@ function App() {
    }, []);
 
   useEffect(() => {
-      if(search && search.replace(/\s/g, "") !== "" && sources && sources.length !== 0){
+
+      if(search && search.replace(/\s/g, "") !== "" && sources && sources.length !== 0  ){
         getNews().then(data => {
-          setArticles(data.articles)
-          setSearchedFlag(true)
-          var tempImagesToShow = [0]
 
-          for (var i = 1; i < 4; i++) {
-            if(Math.random() < ( i === 1 ? 0.5: 0.33)){
-              tempImagesToShow.push(i)
-            }
-          }
 
-          setImagesToShow(tempImagesToShow)
+          setupSentimentModel().then(
+              result => {
+                if(!data.articles){
+                  return
+                }
+                var gottenArticles = data.articles.slice();
+
+                for (var i = 0; i < gottenArticles.length; i++) {
+                  var sentiment_score = getSentimentScore(gottenArticles[i].summary);
+                  gottenArticles[i].sentiment_score = sentiment_score
+                }
+                setArticles(data.articles)
+                setSearchedFlag(true)
+                var tempImagesToShow = [0]
+
+                for (var t = 1; t < 4; t++) {
+                  if(Math.random() < ( t === 1 ? 0.5: 0.33)){
+                    tempImagesToShow.push(t)
+                  }
+                }
+                setImagesToShow(tempImagesToShow)
+              }
+          )
         });
-
-
       }
     },[sources, search, country]
   );
@@ -154,10 +255,8 @@ function App() {
       }
     });
 
-
-    setRequestFloodFlag(response.status === 429)
-
-    return response.json(); // parses JSON response into native JavaScript objects
+    setRequestFloodFlag(response.status == 429)
+    return response.json();
   }
 
   function initializeReactGA() {
@@ -202,16 +301,19 @@ function App() {
     borderRadius: "1.9em",
     border: "0.0625em solid #dfe1e5",
     display: "inline-block",
+    overflow:"hidden"
   }
 
   const SearchBoxInputStyle={
     backgroundColor: "transparent",
-    width:"80%",
+    width:"85%",
     height:"2.75em",
     fontSize:"1.5rem",
     border: "0em",
     marginLeft:"0.25em",
+    marginRight:"0.25em",
     outline: "none",
+
   }
 
   const infoStyle={
@@ -222,19 +324,20 @@ function App() {
     textAlign:"right"
   }
 
+
   return (
       <div style={wrapper}>
         <Helmet>
           <title>Their News: Escape your bubble</title>
           <meta name="description" content="Break out of your political bubble by reading news from the entire political spectrum" />
         </Helmet>
-        <h1 style={{fontSize:"4rem", textAlign:"center"}}>
+        <h1 onClick={()=>{window.location.reload(false)}} style={{fontSize:"4rem", textAlign:"center"}}>
           Their News
         </h1>
 
         <div style={infoStyle }>
           <a href="https://github.com/Hadjimina/perspectiveNews/blob/master/README.md" style={{color:"#212529"}}>
-            <FontAwesomeIcon icon={faInfoCircle} style={{ }}/> {mobile ? "":"Info"}
+            <FontAwesomeIcon icon={faInfoCircle} style={{ fontSize:"1.5rem", verticalAlign:"middle" }}/> {mobile ? "":"Info"}
           </a>
         </div>
 
@@ -253,17 +356,20 @@ function App() {
           <h3 style={{fontSize: "2rem", textAlign:"center"}}>
             {country === "US" ? "Choose a political bias for your news":"Wählen Sie die Orientierung Ihrer Nachrichten"}
           </h3>
-          <BiasSlider mobile={mobile} updateSources={sourceUpdateHandler} country={country}/>
+          <BiasSlider mobile={mobile} updateSources={sourceUpdateHandler} country={country} updateCountry={setCountryAndSources}/>
+
+
 
           {/* SearchBox*/}
           <div  style={SearchBoxWrapper}>
-            <FontAwesomeIcon icon={faSearch} style={{ color:"rgb(154, 160, 166)", fontSize:"1.5rem"}}/>
+            <FontAwesomeIcon className="searchIcon" onClick={()=>{setSearch(tempSearch)}} icon={faSearch}/>
             <input type="text"
               value={tempSearch}
               style={SearchBoxInputStyle}
               onChange = {changeSearch}
               onBlur = {updateSearch}
               onKeyPress = {updateSearch}/>
+            <FontAwesomeIcon className="searchIcon" onClick={()=>{setCountryAndSources(country)}} icon={faRandom} style={{ fontSize:"1.3rem"}}/>
           </div>
           {/* SearchBox*/}
 
@@ -294,7 +400,7 @@ function App() {
             </div>
           }
 
-          {searchedFlag && !(articles && articles.length > 0) &&
+          {!requestFloodFlag && searchedFlag && !(articles && articles.length > 0) &&
             <div style={errorWrapper}>
               <FontAwesomeIcon icon={faQuestion} style={{marginBottom:"0.25em", fontSize:"10rem"}}/>
               <h2> {country === "US?"? "No results found": "Keine Ergebnisse gefunden"} </h2>

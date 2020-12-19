@@ -96,3 +96,7 @@ input[type=range]:focus::-ms-fill-upper {
   background-color: "red";
 
 }
+
+.recommendation:hover{
+  cursor: pointer;
+}

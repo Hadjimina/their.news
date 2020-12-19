@@ -11,5 +11,14 @@
   width: 60%;
   min-width: 28em;
   padding: 0.5em;
+}
 
+.searchIcon{
+  color:rgb(154, 160, 166);
+  font-size: 1.5rem;
+
+}
+
+.searchIcon:hover{
+  cursor: pointer;
 }

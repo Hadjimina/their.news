@@ -3,6 +3,7 @@ import './story.css';
 import Moment from 'react-moment';
 import 'moment-timezone';
 import { utils } from '../../helpers';
+import * as Constants from "../../constants.js"
 
 function SearchBox(props) {
 
@@ -36,6 +37,24 @@ function SearchBox(props) {
        WebkitBoxPack: 'end',
        textOverflow: 'ellipsis'
    };
+
+   const getSentimentImg = ()=>{
+     if(props.country === "CH"){
+       return
+     }
+
+     if (props.article.sentiment_score > Constants.SENTIMENT_THRESHOLD.pos){
+       //Positive
+       return "😄"
+     }else if(Constants.SENTIMENT_THRESHOLD.neu < props.article.sentiment_score && props.article.sentiment_score <= Constants.SENTIMENT_THRESHOLD.pos){
+       //Neutral
+       return "😐"
+     }else{
+       //Negative
+       return "😠"
+     }
+     // return props.article.sentiment_score
+   }
 
   return (
     <div  className={fade ? 'storyWrapper fade' : 'storyWrapper'}
@@ -75,6 +94,8 @@ function SearchBox(props) {
         <div className="details">
           <Moment unix fromNow>{date}</Moment>
         </div>
+
+        {getSentimentImg()}
 
         <div className="details newsoutlet" onClick={()=>{openLink("http://"+props.article.clean_url)}}>
           {props.article.author && siteTitleFromURL[props.article.clean_url] && props.article.author.length+siteTitleFromURL[props.article.clean_url].length < 25 ? props.article.author +" / ":""}{siteTitleFromURL[props.article.clean_url]}
