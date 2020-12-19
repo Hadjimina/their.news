@@ -18,4 +18,5 @@ The media bias chart from [adfontesmedia](https://www.adfontesmedia.com/download
 
 
 ## Support me
+
 <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="hadjimina" data-color="#FF5F5F" data-emoji="🍪"  data-font="Poppins" data-text="Buy me a cookie" data-outline-color="#000000" data-font-color="#ffffff" data-coffee-color="#FFDD00" ></script>
