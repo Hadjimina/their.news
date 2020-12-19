@@ -33,7 +33,6 @@ function getSources(country){
 }
 
 function getTopics(country){
-  console.log("CALLED WITH "+country);
   if (country === "US"){
     return Constants.US_Topics
   }else if(country === "CH"){

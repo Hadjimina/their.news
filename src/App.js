@@ -1,14 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
-import {BiasSlider, SearchBox, Story} from "./components"
+import React, { useState, useEffect, useRef  } from 'react';
+import {BiasSlider,  Story} from "./components"
 import { utils } from './helpers';
 import './App.css';
 import ReactGA from 'react-ga';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faExclamation } from '@fortawesome/free-solid-svg-icons'
+
 import ReactFlagsSelect from 'react-flags-select';
 import 'react-flags-select/css/react-flags-select.css';
 import {Helmet} from 'react-helmet'
 
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faExclamation } from '@fortawesome/free-solid-svg-icons'
+import { faQuestion } from '@fortawesome/free-solid-svg-icons'
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 
 const getWidth = () => window.innerWidth
   || document.documentElement.clientWidth
@@ -24,13 +28,11 @@ function App() {
   const [search, setSearch] = useState();
   const [articles, setArticles] = useState();
   const [mobile, setMobile] = useState(getWidth()<mobileThreshold);
-  const [receivedFlag, setReceivedFlage] = useState(false)
   const [country, setCountry] = useState("US")
-
-  const initialValueSlider = Math.floor((Math.random() * 84))-42;
-  var topics = utils.getTopics(country)
-  const initialValueSearch = topics[Math.floor(Math.random() * topics.length)];
-
+  const [tempSearch, setTempSearch] = useState()
+  const [requestFloodFlag, setRequestFloodFlag ] = useState(false)
+  const [imagesToShow, setImagesToShow] = useState([])
+  const [searchedFlag, setSearchedFlag] = useState(false)
 
   const sourceUpdateHandler = (sourceFromSlider) => {
     if(!sourceFromSlider || !sources){
@@ -42,17 +44,29 @@ function App() {
     }
   }
 
-  const searchUpdateHandler = (searchFromBox) => {
-    if(searchFromBox !== search){
-      setSearch(searchFromBox)
+
+  const updateSearch = (e) => {
+
+    if (e.key === 'Enter') {
+      setSearch(tempSearch)
     }
   }
 
+  const changeSearch = (e) =>{
+
+    setTempSearch(e.target.value)
+  }
+
+
+
   function setCountryAndSources(currentCountry){
     setCountry(currentCountry)
-    let sourceAmount = currentCountry == "US" ? 4: 2
+    let sourceAmount = currentCountry === "US" ? 4: 2
     setSources(utils.getClosestSources(sourceAmount,0, currentCountry))
-
+    var topics = utils.getTopics(currentCountry)
+    var randomTopic = topics[Math.floor(Math.random() * topics.length)]
+    setTempSearch(randomTopic)
+    setSearch(randomTopic)
   }
 
   //onetime only
@@ -91,24 +105,28 @@ function App() {
    }, []);
 
   useEffect(() => {
+      if(search && search.replace(/\s/g, "") !== "" && sources && sources.length !== 0){
+        getNews().then(data => {
+          setArticles(data.articles)
+          setSearchedFlag(true)
+          var tempImagesToShow = [0]
 
-      if (!sources){
-        return
+          for (var i = 1; i < 4; i++) {
+            if(Math.random() < ( i === 1 ? 0.5: 0.33)){
+              tempImagesToShow.push(i)
+            }
+          }
+
+          setImagesToShow(tempImagesToShow)
+        });
+
+
       }
-
-      getNews().then(data => {
-        
-        setArticles(data.articles)
-        setReceivedFlage(true)
-
-      });
     },[sources, search, country]
   );
 
-// FIXME: search function is very odd & called multiple times
   async function getNews() {
-    console.log("Getting news");
-    console.log(sources);
+    //Check that search value existst & is not empty
     var url = new URL("https://newscatcher.p.rapidapi.com/v1/search")
     var data = {
 
@@ -120,21 +138,10 @@ function App() {
 
     // TODO: set "nothing found" error message
 
-    //Check that search value existst & is not empty
-    if(search && search.replace(/\s/g, "") !== ""){
-      data = {
-        ...data,
-        // "lang":"en",
-      	"q": search,
-      }
-    }else{
-
-
-      data = {
-        ...data,
-        // "lang":"en",
-        "q": initialValueSearch,
-      }
+    data = {
+      ...data,
+      // "lang":"en",
+    	"q": search,
     }
 
     url.search = new URLSearchParams(data).toString();
@@ -146,6 +153,9 @@ function App() {
       	"useQueryString": true
       }
     });
+
+
+    setRequestFloodFlag(response.status === 429)
 
     return response.json(); // parses JSON response into native JavaScript objects
   }
@@ -178,14 +188,40 @@ function App() {
     height: "0.0625em"
   }
 
-  const tooManyWrapper = {
+  const errorWrapper = {
     width:"100%",
     textAlign:"center"
   }
 
-  const countrySelection = {
-
+  const SearchBoxWrapper={
+    width:"100%",
+    justifyContent:"center",
+    alignItems:"center",
+    paddingLeft:"0.75em",
+    marginBottom: "1em",
+    borderRadius: "1.9em",
+    border: "0.0625em solid #dfe1e5",
+    display: "inline-block",
   }
+
+  const SearchBoxInputStyle={
+    backgroundColor: "transparent",
+    width:"80%",
+    height:"2.75em",
+    fontSize:"1.5rem",
+    border: "0em",
+    marginLeft:"0.25em",
+    outline: "none",
+  }
+
+  const infoStyle={
+    position:"absolute",
+    width:"78rem",
+    margin: "auto",
+    maxWidth:"98%",
+    textAlign:"right"
+  }
+
   return (
       <div style={wrapper}>
         <Helmet>
@@ -196,7 +232,13 @@ function App() {
           Their News
         </h1>
 
-        <div style={countrySelection}>
+        <div style={infoStyle }>
+          <a href="https://github.com/Hadjimina/perspectiveNews/blob/master/README.md" style={{color:"#212529"}}>
+            <FontAwesomeIcon icon={faInfoCircle} style={{ }}/> {mobile ? "":"Info"}
+          </a>
+        </div>
+
+        <div>
           <ReactFlagsSelect
             defaultCountry={country}
             ref={countrySelectorRef}
@@ -204,15 +246,27 @@ function App() {
             onSelect={(countryCode)=>{setCountryAndSources(countryCode)}}/>
         </div>
 
-        <h3>🚧 Work in progress 🚧</h3>
+
 
         <hr style={darkHR}/>
         <div className ="components">
           <h3 style={{fontSize: "2rem", textAlign:"center"}}>
             {country === "US" ? "Choose a political bias for your news":"Wählen Sie die Orientierung Ihrer Nachrichten"}
           </h3>
-          <BiasSlider mobile={mobile} updateSources={sourceUpdateHandler} initialValue={initialValueSlider} country={country}/>
-          <SearchBox mobile={mobile} updateSearch={searchUpdateHandler} initialValue={initialValueSearch} country={country}/>
+          <BiasSlider mobile={mobile} updateSources={sourceUpdateHandler} country={country}/>
+
+          {/* SearchBox*/}
+          <div  style={SearchBoxWrapper}>
+            <FontAwesomeIcon icon={faSearch} style={{ color:"rgb(154, 160, 166)", fontSize:"1.5rem"}}/>
+            <input type="text"
+              value={tempSearch}
+              style={SearchBoxInputStyle}
+              onChange = {changeSearch}
+              onBlur = {updateSearch}
+              onKeyPress = {updateSearch}/>
+          </div>
+          {/* SearchBox*/}
+
         </div>
         <hr style={lightHR}/>
 
@@ -222,22 +276,36 @@ function App() {
             <div key={index} style={
               mobile ? {flex: index===0 ? "2 0 100%" : "1 0 100%"} : {flex: index===0 ? "2 0 62%" : "1 0 31%" }}>
               <Story key={index} article={article} index={index} country={country}
-                  showImage={!(index === 1 || index === Math.floor(Math.random() * 3) + 2 )}
+                  showImage={imagesToShow.includes(index)}
                   minor={index !==0}
                   mobile={mobile}/>
             </div>
           )}
-          {!(articles && articles.length > 0)&& receivedFlag &&
-            <div style={tooManyWrapper}>
+
+          {requestFloodFlag &&
+            <div style={errorWrapper}>
               <FontAwesomeIcon icon={faExclamation} style={{marginBottom:"0.25em", fontSize:"10rem"}}/>
               <h2> {country === "US?"? "Too many requests": "Zu viele Anfragen"} </h2>
               {country === "US?"?
                 <p> Unfortuantely there have been to many requests to <strong>Their.news</strong> recently.<br/>
-                  This should resolve itself automatically in approximately 1 hour.</p>:
+                  This should resolve itself automatically in approximately 30 min.</p>:
                 <p> Leider gab es in letzter Zeit zu viele Anfragen an <strong>Their.news</strong>. <br/>
-                  Dies sollte sich in etwa einer Stunde automatisch auflösen.</p>}
+                  Dies sollte in ca 30 min automatisch behoben sein.</p>}
+            </div>
+          }
 
-            </div>}
+          {searchedFlag && !(articles && articles.length > 0) &&
+            <div style={errorWrapper}>
+              <FontAwesomeIcon icon={faQuestion} style={{marginBottom:"0.25em", fontSize:"10rem"}}/>
+              <h2> {country === "US?"? "No results found": "Keine Ergebnisse gefunden"} </h2>
+              {country === "US?"?
+              <p> Unfortunately, no results were found for your search.<br/>
+                Make sure all the words are spelled correctly and try again.</p>:
+                <p> Leider wurden keine Ergebnisse zu Ihrer Suche gefunde.<br/>
+                  Stellen Sie sicher, dass alle Wörter richtig geschrieben sind und versuchen Sie es erneut. </p>}
+            </div>
+          }
+
 
 
         </div>

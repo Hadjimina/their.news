@@ -3,7 +3,7 @@ import { utils } from '../../helpers';
 import './BiasSlider.css';
 
 function BiasSlider(props) {
-  const [value, setValue] = useState(props.initialValue);
+  const [value, setValue] = useState(Math.floor((Math.random() * 84))-42);
 
   const updateValue = (e) =>{
     setValue(e.target.value)
