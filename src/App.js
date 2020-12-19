@@ -48,6 +48,13 @@ function App() {
     }
   }
 
+  function setCountryAndSources(currentCountry){
+    setCountry(currentCountry)
+    let sourceAmount = currentCountry == "US" ? 4: 2
+    setSources(utils.getClosestSources(sourceAmount,0, currentCountry))
+
+  }
+
   //onetime only
   useEffect(() => {
     var currentCountry = null;
@@ -64,10 +71,8 @@ function App() {
      }).finally(()=>{
        if (countries.includes(currentCountry)){
          countrySelectorRef.current.updateSelected(currentCountry)
-         setCountry(currentCountry)
-         // FIXME: set sources amount to 2 for CH sources
-         setSources(utils.getClosestSources(3,0, currentCountry))
-         console.log("sources set");
+         setCountryAndSources(currentCountry)
+
        }
      });
 
@@ -86,15 +91,16 @@ function App() {
    }, []);
 
   useEffect(() => {
-      console.log("useEffectd");
-      console.log(sources);
+
       if (!sources){
         return
       }
 
       getNews().then(data => {
+        
         setArticles(data.articles)
         setReceivedFlage(true)
+
       });
     },[sources, search, country]
   );
@@ -102,6 +108,7 @@ function App() {
 // FIXME: search function is very odd & called multiple times
   async function getNews() {
     console.log("Getting news");
+    console.log(sources);
     var url = new URL("https://newscatcher.p.rapidapi.com/v1/search")
     var data = {
 
@@ -194,7 +201,7 @@ function App() {
             defaultCountry={country}
             ref={countrySelectorRef}
             countries={countries}
-            onSelect={(countryCode)=>{setCountry(countryCode)}}/>
+            onSelect={(countryCode)=>{setCountryAndSources(countryCode)}}/>
         </div>
 
         <h3>🚧 Work in progress 🚧</h3>

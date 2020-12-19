@@ -1,5 +1,4 @@
 .storyWrapper{
-
   border-bottom-width: 0.125em;
   border-bottom-style: solid;
   border-bottom-color: #dfe1e5;
@@ -10,26 +9,23 @@
   overflow: hidden;
   display:flex;
   flex-direction: column;
+  cursor: pointer;
 }
 
 .sourceDateWrapper{
   display:flex;
   flex-direction: row;
   justify-content: space-between;
-  flex:1;
+
   align-items: flex-end;
 }
 
 .textImageWrapper{
   display: flex;
   flex:1;
-  max-height: 95%;
 }
 
-.textImageWrapper:hover{
-  text-decoration: underline;
-  cursor: pointer;
-}
+
 
 .details{
   color: #c6c8cc;
@@ -59,9 +55,9 @@
 
 .text{
   flex:1;
-  overflow: auto;
   margin-bottom: 1em;
-  overflow: hidden;
+  overflow:hidden;
+
 }
 
 .text {

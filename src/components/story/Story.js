@@ -11,7 +11,10 @@ function SearchBox(props) {
   }
 
  const [fade, setFade] = useState(false);
- const date = Date.parse(props.article.published_date)/1000
+
+
+ const a = props.article.published_date.split(/[^0-9]/);
+ const date = new Date (a[0],a[1]-1,a[2],a[3],a[4],a[5] )/1000;
  const siteTitleFromURL =  utils.getSourceTitleByURL(utils.getSources(props.country))
  const verticalBorderRight = [0, 2, 3]
 
@@ -19,22 +22,19 @@ function SearchBox(props) {
 
 
  const clampStyleThree = {
-     maxWidth: '100%',
      display: '-webkit-box',
      WebkitBoxOrient: 'vertical',
      WebkitLineClamp: 3,
-     overflow: 'hidden',
-     textOverflow: 'ellipsis',
+     textOverflow: 'ellipsis'
+
    };
 
    const clampStyleTen = {
-       maxWidth: '100%',
        display: '-webkit-box',
        WebkitBoxOrient: 'vertical',
        WebkitLineClamp: 10,
-       overflow: 'hidden',
-       textOverflow: 'ellipsis',
-
+       WebkitBoxPack: 'end',
+       textOverflow: 'ellipsis'
    };
 
   return (
@@ -44,20 +44,20 @@ function SearchBox(props) {
                 setFade(false)}
             }
           }
-          style={!props.mobile && verticalBorderRight.includes(props.index)? {borderRight: "0.0625em solid #dfe1e5"} :{}}>
+          style={!props.mobile && verticalBorderRight.includes(props.index)? {borderRight: "0.0625em solid #dfe1e5"} :{}} onClick={()=>{openLink(props.article.link)}}>
 
       {(props.minor || props.mobile)  &&
           <h3 id="title" style={ props.mobile ? {} : clampStyleThree}> {props.article.title}   </h3>
 
       }
-      <div className="textImageWrapper" style={props.mobile ? {flexDirection:"column-reverse"}:{flexDirection:"row"}} onClick={()=>{openLink(props.article.link)}}>
+      <div className="textImageWrapper" style={props.mobile ? {flexDirection:"column-reverse"}:{flexDirection:"row"}}>
 
         <div className="text">
           {!props.minor && !props.mobile &&
             <h3 id="title" style={ props.mobile ? {} : clampStyleThree}> {props.article.title} </h3>
           }
 
-          <p id="article" style={ props.mobile ? {} : clampStyleTen}>{props.article.summary} HELLO</p>
+          <p id="article" style={ props.mobile ? {} : clampStyleTen}>{props.article.summary}</p>
         </div>
 
         {props.article.media != null   && props.showImage &&

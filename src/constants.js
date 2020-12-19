@@ -11,5 +11,5 @@ export const CH_Sources = [{'name': 'SRF', 'link': 'srf.ch', 'bias': 0.152, 'rel
 
 
 // TODO: fix topics per country
-export const CH_Topics =["Trump",]
+export const CH_Topics =["Rösti",]
 export const US_Topics =["Trump",]
