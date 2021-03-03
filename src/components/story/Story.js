@@ -3,7 +3,6 @@ import "./story.css";
 import Moment from "react-moment";
 import "moment-timezone";
 import { utils } from "../../helpers";
-import * as Constants from "../../constants.js";
 
 function SearchBox(props) {
   const openLink = (link) => {

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { BiasSlider, Story } from "./components";
 import { utils } from "./helpers";
 import "./App.css";
-import ReactGA from "react-ga";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import ReactFlagsSelect from "react-flags-select";
@@ -14,6 +13,8 @@ import { faExclamation } from "@fortawesome/free-solid-svg-icons";
 import { faQuestion } from "@fortawesome/free-solid-svg-icons";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { faRandom } from "@fortawesome/free-solid-svg-icons";
+
+import * as Credentials from "./credentials.js"
 
 // import * as Credentials from "./credentials.js";
 
@@ -113,7 +114,7 @@ function App() {
         if (!data.articles) {
           return;
         }
-        var gottenArticles = data.articles.slice();
+        
         setArticles(data.articles);
         setSearchedFlag(true);
         var tempImagesToShow = [0];
@@ -130,7 +131,7 @@ function App() {
 
   async function getNews() {
     //Check that search value existst & is not empty
-    var url = new URL("https://newscatcher.p.rapidapi.com/v1/search");
+    var url = new URL("https://cors-anywhere-09781234.herokuapp.com/https://zv7211sul1.execute-api.us-east-1.amazonaws.com/prod/v1/search");
     var data = {
       media: "True",
       sort_by: "relevancy",
@@ -138,34 +139,31 @@ function App() {
       sources: sources.toString(),
     };
 
+    console.log(url)
     // TODO: set "nothing found" error message
 
     data = {
       ...data,
-      // "lang":"en",
+      "lang":"en",
       q: search,
     };
 
-    url.search = new URLSearchParams(data).toString();
+    url.search = new URLSearchParams(data).toString(); 
     const response = await fetch(url, {
       method: "GET",
 
       headers: {
-        "x-rapidapi-host": "newscatcher.p.rapidapi.com",
-        "x-rapidapi-key": process.env.REACT_APP_API_KEY,
+        
+        // "x-api-key": process.env.REACT_APP_API_KEY,
+        "x-api-key": Credentials.api_key,
         useQueryString: true,
       },
     });
 
-    setRequestFloodFlag(response.status == 429);
+    setRequestFloodFlag(response.status === 429);
     return response.json();
   }
 
-  function initializeReactGA() {
-    ReactGA.initialize(process.env.REACT_APP_TRACKING_ID);
-    ReactGA.pageview("/");
-  }
-  initializeReactGA();
 
   const wrapper = {
     display: "flex",
