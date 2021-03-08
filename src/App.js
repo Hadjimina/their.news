@@ -12,7 +12,7 @@ import { faExclamation } from "@fortawesome/free-solid-svg-icons";
 import { faQuestion } from "@fortawesome/free-solid-svg-icons";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
-import * as Credentials from "./credentials.js";
+/*import * as Credentials from "./credentials.js";*/
 import * as Strings from "./strings.js"
 
 const getWidth = () =>
