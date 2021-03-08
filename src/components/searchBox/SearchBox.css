@@ -1,0 +1,22 @@
+.SearchBoxWrapper{
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    padding-left: 0.75em;
+    margin-bottom: 1em;
+    border-radius: 1.9em;
+    border: 0.0625em solid #dfe1e5;
+    display: inline-block;
+    overflow: hidden;
+}
+
+.SearchBoxInputStyle{
+    background-color: transparent;
+    width: 85%;
+    height: 2.75em;
+    font-size: 1.5rem;
+    border: 0em;
+    margin-left: 0.25em;
+    margin-right: 0.25em;
+    outline: none;
+}

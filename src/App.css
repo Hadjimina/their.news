@@ -1,11 +1,40 @@
+.infoStyle {
+  position: absolute;
+  width: 78rem;
+  margin: auto;
+  max-width: 98%;
+  text-align: right;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80rem;
+  margin: auto;
+  padding-top: 1em;
+  max-width: 100%;
+}
+
+.darkHR {
+  width: 100%;
+  background-color: #000000;
+  height: 0.0625em;
+}
+
+.lightHR {
+  width: 100%;
+  background-color: #dfe1e5;
+  height: 0.0625em;
+}
+
+/* ---- */
 
 #parent {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
 }
-
-
 
 .components{
   width: 60%;

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import "./story.css";
+import "./Story.css";
 import Moment from "react-moment";
 import "moment-timezone";
 import { utils } from "../../helpers";
 import * as Constants from "../../constants.js";
 
-function SearchBox(props) {
+function Story(props) {
   const openLink = (link) => {
     window.open(link, "_blank");
   };
@@ -128,4 +128,4 @@ function SearchBox(props) {
   );
 }
 
-export default SearchBox;
+export default Story;

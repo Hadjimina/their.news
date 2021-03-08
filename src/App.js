@@ -1,21 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
-import { BiasSlider, Story } from "./components";
+import { BiasSlider, Story, SearchBox, Info } from "./components";
 import { utils } from "./helpers";
 import "./App.css";
-import ReactGA from "react-ga";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import ReactFlagsSelect from "react-flags-select";
 import "react-flags-select/css/react-flags-select.css";
 import { Helmet } from "react-helmet";
 
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { faExclamation } from "@fortawesome/free-solid-svg-icons";
 import { faQuestion } from "@fortawesome/free-solid-svg-icons";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-import { faRandom } from "@fortawesome/free-solid-svg-icons";
 
-// import * as Credentials from "./credentials.js";
+import * as Credentials from "./credentials.js";
+import * as Strings from "./strings.js"
 
 const getWidth = () =>
   window.innerWidth ||
@@ -113,8 +111,8 @@ function App() {
         if (!data.articles) {
           return;
         }
-        var gottenArticles = data.articles.slice();
-        setArticles(data.articles);
+        
+        setArticles(data.articles.slice(0,9));
         setSearchedFlag(true);
         var tempImagesToShow = [0];
 
@@ -152,7 +150,7 @@ function App() {
 
       headers: {
         "x-rapidapi-host": "newscatcher.p.rapidapi.com",
-        "x-rapidapi-key": process.env.REACT_APP_API_KEY,
+        "x-rapidapi-key": Credentials.api_key,
         useQueryString: true,
       },
     });
@@ -161,72 +159,13 @@ function App() {
     return response.json();
   }
 
-  function initializeReactGA() {
-    ReactGA.initialize(process.env.REACT_APP_TRACKING_ID);
-    ReactGA.pageview("/");
-  }
-  initializeReactGA();
-
-  const wrapper = {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    width: "80rem",
-    margin: "auto",
-    paddingTop: "1em",
-    maxWidth: "100%",
-  };
-
-  const darkHR = {
-    width: "100%",
-    backgroundColor: "#000000",
-    height: "0.0625em",
-  };
-
-  const lightHR = {
-    width: "100%",
-    backgroundColor: "#dfe1e5",
-    height: "0.0625em",
-  };
-
   const errorWrapper = {
     width: "100%",
     textAlign: "center",
   };
 
-  const SearchBoxWrapper = {
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingLeft: "0.75em",
-    marginBottom: "1em",
-    borderRadius: "1.9em",
-    border: "0.0625em solid #dfe1e5",
-    display: "inline-block",
-    overflow: "hidden",
-  };
-
-  const SearchBoxInputStyle = {
-    backgroundColor: "transparent",
-    width: "85%",
-    height: "2.75em",
-    fontSize: "1.5rem",
-    border: "0em",
-    marginLeft: "0.25em",
-    marginRight: "0.25em",
-    outline: "none",
-  };
-
-  const infoStyle = {
-    position: "absolute",
-    width: "78rem",
-    margin: "auto",
-    maxWidth: "98%",
-    textAlign: "right",
-  };
-
   return (
-    <div style={wrapper}>
+    <div className="wrapper">
       <Helmet>
         <title>Their News: Escape your bubble</title>
         <meta
@@ -238,23 +177,14 @@ function App() {
         onClick={() => {
           window.location.reload(false);
         }}
-        style={{ fontSize: "4rem", textAlign: "center" }}
+        style={{ fontSize: "4rem", textAlign: "center", cursor: "pointer" }}
       >
-        Their News
+        {Strings.TITLE}
       </h1>
 
-      <div style={infoStyle}>
-        <a
-          href="https://github.com/Hadjimina/perspectiveNews/blob/master/README.md"
-          style={{ color: "#212529" }}
-        >
-          <FontAwesomeIcon
-            icon={faInfoCircle}
-            style={{ fontSize: "1.5rem", verticalAlign: "middle" }}
-          />{" "}
-          {mobile ? "" : "Info"}
-        </a>
-      </div>
+      <Info
+        mobile={mobile}
+      />
 
       <div>
         <ReactFlagsSelect
@@ -267,49 +197,31 @@ function App() {
         />
       </div>
 
-      <hr style={darkHR} />
+      <hr className="darkHR"/>
+      
       <div className="components">
         <h3 style={{ fontSize: "2rem", textAlign: "center" }}>
           {country === "US"
             ? "Choose a political bias for your news"
             : "Wählen Sie die Orientierung Ihrer Nachrichten"}
         </h3>
+        <SearchBox
+          updateSearch={updateSearch}
+          changeSearch={changeSearch}
+          tempSearch={tempSearch}
+          setSearch={setSearch}
+          updateSources={sourceUpdateHandler}
+          country={country}
+          updateCountry={setCountryAndSources}
+        />
         <BiasSlider
           mobile={mobile}
           updateSources={sourceUpdateHandler}
           country={country}
           updateCountry={setCountryAndSources}
         />
-
-        {/* SearchBox*/}
-        <div style={SearchBoxWrapper}>
-          <FontAwesomeIcon
-            className="searchIcon"
-            onClick={() => {
-              setSearch(tempSearch);
-            }}
-            icon={faSearch}
-          />
-          <input
-            type="text"
-            value={tempSearch}
-            style={SearchBoxInputStyle}
-            onChange={changeSearch}
-            onBlur={updateSearch}
-            onKeyPress={updateSearch}
-          />
-          <FontAwesomeIcon
-            className="searchIcon"
-            onClick={() => {
-              setCountryAndSources(country);
-            }}
-            icon={faRandom}
-            style={{ fontSize: "1.3rem" }}
-          />
-        </div>
-        {/* SearchBox*/}
       </div>
-      <hr style={lightHR} />
+      <hr className="lightHR"/>
 
       <div id="parent">
         {articles &&
@@ -318,9 +230,10 @@ function App() {
             <div
               key={index}
               style={
-                mobile
-                  ? { flex: index === 0 ? "2 0 100%" : "1 0 100%" }
-                  : { flex: index === 0 ? "2 0 62%" : "1 0 31%" }
+                !mobile ? {flex: index === 0 ? "2 0 62%" : 
+                                index === 3 ? "1 0 31%" :
+                                            "1 0 25%" } : 
+                          {flex: "1 0 100%"}
               }
             >
               <Story
