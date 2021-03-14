@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ReactFlagsSelect from "react-flags-select";
 import "react-flags-select/css/react-flags-select.css";
 
-import * as Credentials from "./credentials.js";
+/* import * as Credentials from "./credentials.js"; */
 import * as Strings from "./helpers/strings.js"
 import * as Constants from "./helpers/constants.js";
 

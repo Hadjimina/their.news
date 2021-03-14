@@ -2,7 +2,8 @@
 .block_container {
   display: flex;
   justify-content: center;
-  font-size: 1.2em;
+  font-size: 1.0em;
+  margin-top: -4px;
 }
 .apiLogo{
   margin-left: 4px;
