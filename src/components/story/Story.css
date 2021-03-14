@@ -25,8 +25,6 @@
   flex:1;
 }
 
-
-
 .details{
   color: #c6c8cc;
   font-style: italic;
@@ -38,26 +36,26 @@
 }
 #title{
   display: -webkit-box;
-
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-bottom: 1.5em;
+  
 }
 #article{
   display: -webkit-box;
-
+  margin-top: 1.5em;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
   margin-right: 1em;
+  
 }
 
 .text{
   flex:1;
   margin-bottom: 1em;
   overflow:hidden;
-
+  justify-content: end;
 }
 
 .text {

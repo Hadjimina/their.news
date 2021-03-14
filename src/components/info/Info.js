@@ -3,7 +3,6 @@ import { utils } from '../../helpers';
 import './Info.css';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
 function Info(props) {
 
@@ -15,10 +14,11 @@ function Info(props) {
                 style={{ color: "#212529" }}
             >
             <FontAwesomeIcon
-                icon={faInfoCircle}
-                style={{ fontSize: "1.5rem", verticalAlign: "middle" }}
+                icon={"info-circle"}
+                style={{ fontSize: "1.2rem", verticalAlign: "middle" }}
             />{" "}
-            {props.mobile ? "" : "Info"}
+            {/* Looks cleaner without "info" label */}
+            {/* {props.mobile ? "" : "Info"} */}
             </a>
         </div>
         

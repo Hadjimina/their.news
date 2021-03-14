@@ -3,7 +3,7 @@ import "./Story.css";
 import Moment from "react-moment";
 import "moment-timezone";
 import { utils } from "../../helpers";
-import * as Constants from "../../constants.js";
+import * as Constants from "../../helpers/constants.js";
 
 function Story(props) {
   const openLink = (link) => {
@@ -56,9 +56,8 @@ function Story(props) {
       }}
     >
       {(props.minor || props.mobile) && (
-        <h3 id="title" style={props.mobile ? {} : clampStyleThree}>
-          {" "}
-          {props.article.title}{" "}
+        <h3 id="title" style={props.mobile ? {} : clampStyleThree, props.index>4 ?{fontSize:"1.2rem"}:{}}>
+          {props.article.title}
         </h3>
       )}
       <div
@@ -72,14 +71,16 @@ function Story(props) {
         <div className="text">
           {!props.minor && !props.mobile && (
             <h3 id="title" style={props.mobile ? {} : clampStyleThree}>
-              {" "}
-              {props.article.title}{" "}
+              {props.article.title}
             </h3>
           )}
 
-          <p id="article" style={props.mobile ? {} : clampStyleTen}>
+          {/* Show summary in all but last 4 entries */}
+          {props.index <= 4 &&
+            <p id="article" style={props.mobile ? {} : clampStyleTen}>
             {props.article.summary}
-          </p>
+          </p>}
+          
         </div>
 
         {props.article.media != null && props.showImage && (
@@ -114,14 +115,9 @@ function Story(props) {
             openLink("http://" + props.article.clean_url);
           }}
         >
-          {props.article.author &&
-          siteTitleFromURL[props.article.clean_url] &&
-          props.article.author.length +
-            siteTitleFromURL[props.article.clean_url].length <
-            25
-            ? props.article.author + " / "
-            : ""}
+          
           {siteTitleFromURL[props.article.clean_url]}
+          
         </div>
       </div>
     </div>

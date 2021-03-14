@@ -27,6 +27,7 @@
     "react-live-clock": "^4.0.5",
     "react-moment": "^1.0.0",
     "react-scripts": "3.4.1",
+    "react-spinners": "^0.10.6",
     "rss-parser": "^3.8.0",
     "styled-by": "^0.3.0"
   },

@@ -3,8 +3,7 @@ import { utils } from '../../helpers';
 import './SearchBox.css';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRandom } from "@fortawesome/free-solid-svg-icons";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+
 
 function SearchBox(props) {
 
@@ -13,13 +12,13 @@ function SearchBox(props) {
             <FontAwesomeIcon
                 className="searchIcon"
                 onClick={() => {
-                    props.setSearch(props.tempSearch);
+                    props.setSearch(props.searchText);
                 }}
-                icon={faSearch}
+                icon="search"
             />
             <input
                 type="text"
-                value={props.tempSearch}
+                value={props.searchText}
                 className="SearchBoxInputStyle"
                 onChange={(e)=>{
                     props.changeSearch(e)
@@ -36,7 +35,7 @@ function SearchBox(props) {
                 onClick={() => {
                     props.updateCountry(props.country)                
                 }}
-                icon={faRandom}
+                icon="random"
                 style={{ fontSize: "1.3rem" }}
             />
         </div> 

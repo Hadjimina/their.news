@@ -1,4 +1,4 @@
-import * as Constants from "../constants.js"
+import * as Constants from "./constants.js"
 
 function getSourcesByBias(sources){
 

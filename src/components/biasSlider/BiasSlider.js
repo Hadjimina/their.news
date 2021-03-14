@@ -50,13 +50,14 @@ function BiasSlider(props) {
         onChange = {updateValue}
         onMouseUp = {updateSources}
         onTouchEnd = {updateSources}/>
-      <div style={{textAlign:"center", marginBottom:"0.5em"}}>
+      {/* DISABLED EXPLANATINO */}
+ {/*      <div style={{textAlign:"center", marginBottom:"0.5em"}}>
         {props.country === "CH"? "Diese Website funktioniert am besten mit  ":  "This website works best on "}
         <strong className="recommendation" onClick={()=>{props.updateCountry("US")}}> {props.country==="CH"? "amerikanischen ": "american "} </strong>
         {props.country === "CH"? "Nachrichten und mit":  "news and with"}
         <strong className="recommendation" onClick={()=>{setExtremePosition()}}> {props.country==="CH"? "extremen ": "extreme "} </strong>
         {props.country === "CH"? " politischen positionen":  " political positions"}
-      </div>
+      </div> */}
     </div>
   );
 }

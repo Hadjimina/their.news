@@ -2,8 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import 'font-awesome/css/font-awesome.min.css';
+import { library } from '@fortawesome/fontawesome-svg-core'
+
+import { faExclamation, faSearch, faQuestion, faSpinner, faInfoCircle, faRandom,  } from '@fortawesome/free-solid-svg-icons'
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+library.add( faExclamation, faSearch, faQuestion, faSpinner, faInfoCircle, faRandom, )
 
 ReactDOM.render(
   <React.StrictMode>

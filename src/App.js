@@ -1,19 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
-import { BiasSlider, Story, SearchBox, Info } from "./components";
+import { BiasSlider, Story, SearchBox, Info, PopupMessage } from "./components";
 import { utils } from "./helpers";
 import "./App.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import ReactFlagsSelect from "react-flags-select";
 import "react-flags-select/css/react-flags-select.css";
-import { Helmet } from "react-helmet";
 
-import { faExclamation } from "@fortawesome/free-solid-svg-icons";
-import { faQuestion } from "@fortawesome/free-solid-svg-icons";
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-
-/*import * as Credentials from "./credentials.js";*/
-import * as Strings from "./strings.js"
+import * as Credentials from "./credentials.js";
+import * as Strings from "./helpers/strings.js"
+import * as Constants from "./helpers/constants.js";
 
 const getWidth = () =>
   window.innerWidth ||
@@ -31,8 +27,8 @@ function App() {
   const [articles, setArticles] = useState();
   const [mobile, setMobile] = useState(getWidth() < mobileThreshold);
   const [country, setCountry] = useState("US");
-  const [tempSearch, setTempSearch] = useState();
-  const [requestFloodFlag, setRequestFloodFlag] = useState(false);
+  const [searchText, setsearchText] = useState();
+
   const [imagesToShow, setImagesToShow] = useState([]);
   const [searchedFlag, setSearchedFlag] = useState(false);
 
@@ -48,28 +44,24 @@ function App() {
 
   const updateSearch = (e) => {
     if (e.key === "Enter") {
-      setSearch(tempSearch);
+      setSearchedFlag(false)
+      setSearch(searchText);
     }
   };
 
   const changeSearch = (e) => {
-    setTempSearch(e.target.value);
+    setsearchText(e.target.value);
   };
 
   function setCountryAndSources(currentCountry) {
     setCountry(currentCountry);
     countrySelectorRef.current.updateSelected(currentCountry);
-    let sourceAmount = currentCountry === "US" ? 4 : 2;
-    setSources(utils.getClosestSources(sourceAmount, 0, currentCountry));
-    var topics = utils.getTopics(currentCountry);
-    var randomTopic = topics[Math.floor(Math.random() * topics.length)];
-    setTempSearch(randomTopic);
-    setSearch(randomTopic);
   }
 
+  /* DISABLED LOCATION RECOGNITION */
   //onetime only
   useEffect(() => {
-    var currentCountry = null;
+    /* var currentCountry = null;
     fetch("https://extreme-ip-lookup.com/json/")
       .then((res) => res.json())
       .then((response) => {
@@ -85,11 +77,19 @@ function App() {
         if (countries.includes(currentCountry)) {
           setCountryAndSources(currentCountry);
         }
-      });
+      }); */
+    
+    let sourceAmount =  4 ;
+    setSources(utils.getClosestSources(sourceAmount, 0, country));
+    var topics = utils.getTopics(country);
+    var randomTopic = topics[Math.floor(Math.random() * topics.length)];
+    setsearchText(randomTopic);
+    setSearch(randomTopic);
 
     let timeoutId = null;
     const resizeListener = () => {
       clearTimeout(timeoutId);
+      console.log(getWidth())
       timeoutId = setTimeout(() => setMobile(getWidth() < mobileThreshold), 0);
     };
     // set resize listener
@@ -101,6 +101,7 @@ function App() {
   }, []);
 
   useEffect(() => {
+
     if (
       search &&
       search.replace(/\s/g, "") !== "" &&
@@ -108,16 +109,17 @@ function App() {
       sources.length !== 0
     ) {
       getNews().then((data) => {
+        setSearchedFlag(true)
         if (!data.articles) {
-          return;
+          setArticles([])
+          return
         }
         
         setArticles(data.articles.slice(0,9));
-        setSearchedFlag(true);
         var tempImagesToShow = [0];
 
-        for (var t = 1; t < 4; t++) {
-          if (Math.random() < (t === 1 ? 0.5 : 0.33)) {
+        for (var t = 2; t < 4; t++) {
+          if (Math.random() < 0.66) {
             tempImagesToShow.push(t);
           }
         }
@@ -127,6 +129,7 @@ function App() {
   }, [sources, search, country]);
 
   async function getNews() {
+    setSearchedFlag(false)
     //Check that search value existst & is not empty
     var url = new URL("https://newscatcher.p.rapidapi.com/v1/search");
     var data = {
@@ -136,11 +139,10 @@ function App() {
       sources: sources.toString(),
     };
 
-    // TODO: set "nothing found" error message
 
     data = {
       ...data,
-      // "lang":"en",
+      "lang":"en",
       q: search,
     };
 
@@ -155,24 +157,35 @@ function App() {
       },
     });
 
-    setRequestFloodFlag(response.status == 429);
+    
     return response.json();
   }
 
-  const errorWrapper = {
-    width: "100%",
-    textAlign: "center",
-  };
+  const getPopupMessage = (()=>{
+    var ret
+    if (searchedFlag && (!articles || articles.length <= 0)){
+    /* Searched but did not find anything*/
+        ret = (<PopupMessage 
+                title= {Strings.NOTHING_FOUND_TITLE}
+                body = {Strings.NOTHING_FOUND_BODY}
+                icon = "question"
+              />)
+    }else if(!searchedFlag && (!articles || articles.length <= 0)) {
+    /* Not yet searched. We are loading*/
+        ret = (<PopupMessage 
+          title = {Strings.LOADING_TITLE}
+          body =  {Strings.LOADING_BODY}
+          icon = {Constants.Loading_key}
+        />)
+    }
+    return ret
+       
+  })
+
+
 
   return (
     <div className="wrapper">
-      <Helmet>
-        <title>Their News: Escape your bubble</title>
-        <meta
-          name="description"
-          content="Break out of your political bubble by reading news from the entire political spectrum"
-        />
-      </Helmet>
       <h1
         onClick={() => {
           window.location.reload(false);
@@ -181,12 +194,19 @@ function App() {
       >
         {Strings.TITLE}
       </h1>
+      
+      <div className="block_container">
+        <div id="bloc1">{Strings.POWERED_BY} </div>
+        <div className="apiLogo" onClick={()=> window.open("https://newscatcherapi.com/", "_blank")}>{Strings.API_NAME}</div>
+      </div>
 
       <Info
         mobile={mobile}
       />
 
-      <div>
+      {/* Disabled country selection */}
+      
+      {/* <div>
         <ReactFlagsSelect
           defaultCountry={country}
           ref={countrySelectorRef}
@@ -195,20 +215,18 @@ function App() {
             setCountryAndSources(countryCode);
           }}
         />
-      </div>
+      </div> */}
 
       <hr className="darkHR"/>
       
       <div className="components">
         <h3 style={{ fontSize: "2rem", textAlign: "center" }}>
-          {country === "US"
-            ? "Choose a political bias for your news"
-            : "Wählen Sie die Orientierung Ihrer Nachrichten"}
+          {Strings.CTA}
         </h3>
         <SearchBox
           updateSearch={updateSearch}
           changeSearch={changeSearch}
-          tempSearch={tempSearch}
+          searchText={searchText}
           setSearch={setSearch}
           updateSources={sourceUpdateHandler}
           country={country}
@@ -229,13 +247,14 @@ function App() {
           articles.map((article, index) => (
             <div
               key={index}
+              // on desktop different widths, mobile all 100%
               style={
                 !mobile ? {flex: index === 0 ? "2 0 62%" : 
                                 index === 3 ? "1 0 31%" :
                                             "1 0 25%" } : 
                           {flex: "1 0 100%"}
-              }
-            >
+            }>
+            
               <Story
                 key={index}
                 article={article}
@@ -248,70 +267,9 @@ function App() {
             </div>
           ))}
 
-        {requestFloodFlag && (
-          <div style={errorWrapper}>
-            <FontAwesomeIcon
-              icon={faExclamation}
-              style={{ marginBottom: "0.25em", fontSize: "10rem" }}
-            />
-            <h2>
-              {" "}
-              {country === "US?"
-                ? "Too many requests"
-                : "Zu viele Anfragen"}{" "}
-            </h2>
-            {country === "US?" ? (
-              <p>
-                {" "}
-                Unfortuantely there have been to many requests to{" "}
-                <strong>Their.news</strong> recently.
-                <br />
-                This should resolve itself automatically in approximately 30
-                min.
-              </p>
-            ) : (
-              <p>
-                {" "}
-                Leider gab es in letzter Zeit zu viele Anfragen an{" "}
-                <strong>Their.news</strong>. <br />
-                Dies sollte in ca 30 min automatisch behoben sein.
-              </p>
-            )}
-          </div>
-        )}
-
-        {!requestFloodFlag &&
-          searchedFlag &&
-          !(articles && articles.length > 0) && (
-            <div style={errorWrapper}>
-              <FontAwesomeIcon
-                icon={faQuestion}
-                style={{ marginBottom: "0.25em", fontSize: "10rem" }}
-              />
-              <h2>
-                {" "}
-                {country === "US?"
-                  ? "No results found"
-                  : "Keine Ergebnisse gefunden"}{" "}
-              </h2>
-              {country === "US?" ? (
-                <p>
-                  {" "}
-                  Unfortunately, no results were found for your search.
-                  <br />
-                  Make sure all the words are spelled correctly and try again.
-                </p>
-              ) : (
-                <p>
-                  {" "}
-                  Leider wurden keine Ergebnisse zu Ihrer Suche gefunde.
-                  <br />
-                  Stellen Sie sicher, dass alle Wörter richtig geschrieben sind
-                  und versuchen Sie es erneut.{" "}
-                </p>
-              )}
-            </div>
-          )}
+        {getPopupMessage()}
+        
+        
       </div>
     </div>
   );
