@@ -239,8 +239,11 @@ function App() {
         /* Show images for 2nd row with probability of 66% in desktop mode*/
         
         if (Math.random() < 0.66) {
-          
-          tempImagesToShow.splice(tempImagesToShow.length-1,1)
+          /* We remove some image */
+          var max = tempImagesToShow.length
+          var min = 1
+          var toRemoveIndex = Math.floor(Math.random()*(max - min +1))+1
+          tempImagesToShow.splice(toRemoveIndex-1,1)
         }
         console.log(tempImagesToShow.length)
         setImagesToShow(tempImagesToShow);

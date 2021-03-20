@@ -28,7 +28,7 @@ function Story(props) {
   const clampStyleSmall = {
     display: "-webkit-box",
     WebkitBoxOrient: "vertical",
-    WebkitLineClamp: 4,
+    WebkitLineClamp: 6,
     WebkitBoxPack: "end",
     textOverflow: "ellipsis",
   };
@@ -36,7 +36,7 @@ function Story(props) {
   const clampStyleBig = {
     display: "-webkit-box",
     WebkitBoxOrient: "vertical",
-    WebkitLineClamp: 11,
+    WebkitLineClamp: 12,
     WebkitBoxPack: "end",
     textOverflow: "ellipsis",
   };
