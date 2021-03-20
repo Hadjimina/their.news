@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ReactFlagsSelect from "react-flags-select";
 import "react-flags-select/css/react-flags-select.css";
 
-/* import * as Credentials from "./credentials.js"; */
+ import * as Credentials from "./credentials.js"; 
 import * as Strings from "./helpers/strings.js"
 import * as Constants from "./helpers/constants.js";
 
@@ -38,6 +38,7 @@ function App() {
     }
 
     if (sourceFromSlider.join(",") !== sources.join(",")) {
+      setSearchedFlag(false)
       setSources(sourceFromSlider);
     }
   };
@@ -45,17 +46,41 @@ function App() {
   const updateSearch = (e) => {
     if (e.key === "Enter") {
       setSearchedFlag(false)
-      setSearch(searchText);
+      searchWrapper(searchText)
     }
   };
 
   const changeSearch = (e) => {
-    setsearchText(e.target.value);
+    if("target" in e){
+      setsearchText(e.target.value);
+    }
   };
 
+  const searchWrapper = (value) => {
+    if(value == search){
+      /* Simulate search */
+      /* TODO */ 
+      /* console.log("timers")
+      setSearchedFlag(false) */
+      return
+    } 
+    console.log("setting")
+    console.log(value)
+    setSearchedFlag(false)
+    setArticles([])
+    setSearch(value)
+  }
+
   function setCountryAndSources(currentCountry) {
-    setCountry(currentCountry);
-    countrySelectorRef.current.updateSelected(currentCountry);
+    /* setCountry(currentCountry);
+    countrySelectorRef.current.updateSelected(currentCountry); */
+  }
+
+  function setRandomSearch(country){
+    
+    var randomTopic = utils.getRandomTopic(country)
+    setsearchText(randomTopic);
+    searchWrapper(randomTopic);
   }
 
   /* DISABLED LOCATION RECOGNITION */
@@ -81,15 +106,11 @@ function App() {
     
     let sourceAmount =  4 ;
     setSources(utils.getClosestSources(sourceAmount, 0, country));
-    var topics = utils.getTopics(country);
-    var randomTopic = topics[Math.floor(Math.random() * topics.length)];
-    setsearchText(randomTopic);
-    setSearch(randomTopic);
+    setRandomSearch(country)
 
     let timeoutId = null;
     const resizeListener = () => {
       clearTimeout(timeoutId);
-      console.log(getWidth())
       timeoutId = setTimeout(() => setMobile(getWidth() < mobileThreshold), 0);
     };
     // set resize listener
@@ -100,8 +121,102 @@ function App() {
     };
   }, []);
 
-  useEffect(() => {
+  function orderArticles(articles){
+    console.log("article amount "+articles.length)
+    // Remove duplicates
+    if (!Constants.Should_remove_duplicates){
+      return articles.slice(0, Constants.Article_amount-1)
+    }
 
+    var indicesToRemove = []
+    for (var i = 0; i < articles.length; i++){
+      for (var j = 0; j < articles.length; j++){
+          if(i == j || j in indicesToRemove){
+            continue
+          }
+          // Set articles score
+          var score = 0
+          
+          // +1 for search text in title
+          if(articles[j].title.toLowerCase().includes(search.toLowerCase())){
+            score += 1.0
+          }
+          articles[j]["score"] =  score
+          
+          // Check similarity
+          //JaronWrinker is super computationally expensive
+          var titleDistance = utils.JaroWrinker(articles[i].title, articles[j].title)
+          var summaryDistance = utils.JaroWrinker(articles[i].summary, articles[j].summary)
+
+          if(titleDistance > Constants.JaroWrinker_threshold || summaryDistance > Constants.JaroWrinker_threshold){
+            indicesToRemove.push(j)
+          }
+          
+      }
+      
+    }
+    var oldLength = articles.length
+    for( const index of indicesToRemove){
+      articles.splice(index,1)
+    }
+    
+    //console.log("Removed "+(oldLength-articles.length)+" items")
+
+    
+    // randomize outlets as good as possible
+    /* var outletDict = {};
+    // 1. create dictionary
+    for(const article of articles){
+      if(outletDict.hasOwnProperty(article.clean_url)){
+        var v = outletDict[article.clean_url]
+        v.push(article)
+        outletDict[article.clean_url] = v
+      }else{
+        outletDict[article.clean_url] = [article]
+      }
+    }
+    // 2. Sort based on score
+    var pointerAndMaxDict = {}
+    for(var k in outletDict){
+      pointerAndMaxDict[k] = [0,outletDict[k].length]
+      var list = outletDict[k]
+      list.sort((a, b) => (a.score < b.score) ? 1 : -1)
+      outletDict[k] = list
+    }
+    
+    // 3. create new array
+    // we show at max 10 items
+    var final = []
+    var temp = []
+    var keys = Object.keys(outletDict)
+    console.log(keys)
+    for(var i = 0; i<10; i++){
+      console.log("*******out******")
+      console.log("final "+final.join())
+      console.log("temp "+temp.join())
+
+      var curKey = keys[i % keys.length]
+      var curPointer = pointerAndMaxDict[curKey][0]
+      var curMax = pointerAndMaxDict[curKey][1]
+      console.log("curkey "+curKey)
+    
+      if(curPointer < curMax){
+        temp.push(outletDict[k][curPointer])
+        pointerAndMaxDict[curKey][0] = curPointer+1
+      }
+
+      if(temp.length == 4){
+        utils.shuffleArray(temp)
+        final.push(temp)
+        temp = []
+      }
+    }
+
+    console.log(final) */
+    return articles.slice(0, Constants.Article_amount-1)
+  }
+
+  useEffect(() => {
     if (
       search &&
       search.replace(/\s/g, "") !== "" &&
@@ -115,9 +230,9 @@ function App() {
           return
         }
         
-        setArticles(data.articles.slice(0,9));
+        setArticles(orderArticles(data.articles));
         var tempImagesToShow = [0];
-
+        /* Show images for 2nd row with probability of 66% in desktop mode*/
         for (var t = 2; t < 4; t++) {
           if (Math.random() < 0.66) {
             tempImagesToShow.push(t);
@@ -152,7 +267,8 @@ function App() {
 
       headers: {
         "x-rapidapi-host": "newscatcher.p.rapidapi.com",
-        "x-rapidapi-key": process.env.REACT_APP_API_KEY,
+        /* "x-rapidapi-key": process.env.REACT_APP_API_KEY, */
+        "x-rapidapi-key": Credentials.api_key,
         useQueryString: true,
       },
     });
@@ -223,14 +339,16 @@ function App() {
         <h3 style={{ fontSize: "2rem", textAlign: "center" }}>
           {Strings.CTA}
         </h3>
+        {/* This should be clean up */}
         <SearchBox
           updateSearch={updateSearch}
           changeSearch={changeSearch}
           searchText={searchText}
-          setSearch={setSearch}
+          setSearch={searchWrapper}
           updateSources={sourceUpdateHandler}
           country={country}
           updateCountry={setCountryAndSources}
+          setRandomSearch={setRandomSearch}
         />
         <BiasSlider
           mobile={mobile}

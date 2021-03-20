@@ -23,20 +23,33 @@ function Story(props) {
     setFade(true);
   }, [props.article.summary]);
 
-  const clampStyleThree = {
-    display: "-webkit-box",
-    WebkitBoxOrient: "vertical",
-    WebkitLineClamp: 3,
-    textOverflow: "ellipsis",
-  };
 
-  const clampStyleTen = {
+
+  const clampStyleSmall = {
     display: "-webkit-box",
     WebkitBoxOrient: "vertical",
-    WebkitLineClamp: 10,
+    WebkitLineClamp: 7,
     WebkitBoxPack: "end",
     textOverflow: "ellipsis",
   };
+
+  const clampStyleBig = {
+    display: "-webkit-box",
+    WebkitBoxOrient: "vertical",
+    WebkitLineClamp: 12,
+    WebkitBoxPack: "end",
+    textOverflow: "ellipsis",
+  };
+
+  const imageStyle = {
+      objectFit: "contain",
+      height:props.index == 0?"100%": "100px",
+      width:"100%",
+      /* maxWidth: "100%",
+      maxHeight: props.index == 0?"100%":"50%", */
+      margin: "auto",
+    
+  }
 
   return (
     <div
@@ -55,8 +68,9 @@ function Story(props) {
         openLink(props.article.link);
       }}
     >
+
       {(props.minor || props.mobile) && (
-        <h3 id="title" style={props.mobile ? {} : clampStyleThree, props.index>4 ?{fontSize:"1.2rem"}:{}}>
+        <h3 id="title" style={props.index>4 ?{fontSize:"1.2rem"}:{}}>
           {props.article.title}
         </h3>
       )}
@@ -65,34 +79,35 @@ function Story(props) {
         style={
           props.mobile
             ? { flexDirection: "column-reverse" }
-            : { flexDirection: "row" }
+            : props.index > 0? {flexDirection: "column-reverse"}: { flexDirection: "row" }
         }
       >
-        <div className="text">
+        <div className="text" style={props.index === 0?{marginRight:"0.5em"}:{}}>
+          {/* Title for index 0 */}
           {!props.minor && !props.mobile && (
-            <h3 id="title" style={props.mobile ? {} : clampStyleThree}>
+            <h3 id="title" >
               {props.article.title}
             </h3>
           )}
 
           {/* Show summary in all but last 4 entries */}
-          {props.index <= 4 &&
-            <p id="article" style={props.mobile ? {} : clampStyleTen}>
+          {props.index < 5 &&
+          /* show 14 lines if no image & 1<index<5 otw 10  */
+            <p id="article" 
+              style={props.mobile ? 
+                        {clampStyleBig} : 
+                        1< props.index&& !props.showImage ? 
+                          clampStyleBig: props.index < 2? clampStyleBig: clampStyleSmall}>
             {props.article.summary}
           </p>}
           
         </div>
 
         {props.article.media != null && props.showImage && (
-          <div className="fill">
+          <div className="fill" style={{flex:1}}>
             <img
               src={props.article.media}
-              style={{
-                objectFit: "contain",
-                maxWidth: "100%",
-                maxHeight: "100%",
-                marginBottom: "0.5em",
-              }}
+              style={imageStyle}
               alt="html cleaner"
               onLoad={() => {
                 setFade(false);

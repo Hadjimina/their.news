@@ -28,6 +28,7 @@
 .details{
   color: #c6c8cc;
   font-style: italic;
+  margin-top: 0.5em;
 }
 
 .newsoutlet:hover{
@@ -39,31 +40,32 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  
+  /*restrict to max 3 lines*/
+  -webkit-line-clamp: 3;
+
+  /*always have space for 3 lines*/
+  line-height: 2.3ex;
+  height: 6.9ex; /* 2.5ex for each visible line */
+  overflow: hidden;
 }
 #article{
-  display: -webkit-box;
-  margin-top: 1.5em;
-  -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-right: 1em;
-  
 }
 
 .text{
   flex:1;
-  margin-bottom: 1em;
   overflow:hidden;
-  justify-content: end;
+  justify-content: start;
+  
 }
 
-.text {
-  flex:1;
-}
 
 .fill{
-  flex:1;
+  display: flex;
+  text-align: center;
+  margin: 0.5em;
+  
 }
 
 .fade {

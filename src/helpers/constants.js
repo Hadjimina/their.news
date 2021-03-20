@@ -11,6 +11,11 @@ export const CH_Sources = [{'name': 'SRF', 'link': 'srf.ch', 'bias': 0.152, 'rel
 
 
 export const CH_Topics =["Bildungswesen","Corona", "Covid", "EU", "Brexit", "Wirtschaft", "Trump", "Biden", "Klimaschutz", "Terror", "Impfung"]
-export const US_Topics =["Trump", "Biden", "Corona", "Covid", "Abortion", "Gun control", "Vaccines", "Capitalism", "Climate change", "Immigration", "Transgender", "White supremacy", "Black Lives Matter"]
+export const US_Topics =["Trump", "Biden", "Corona", "Covid", "Abortion", "Gun control", "Vaccines", "Capitalism", "Climate change", "Immigration", "Transgender", "White supremacy", "Black Lives Matter", "QAnon", "Stimulus"]
 
 export const Loading_key = "loading"
+
+export const JaroWrinker_threshold = 0.88
+
+export const Should_remove_duplicates = false
+export const Article_amount = 10

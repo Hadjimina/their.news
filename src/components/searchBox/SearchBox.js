@@ -33,7 +33,7 @@ function SearchBox(props) {
             <FontAwesomeIcon
                 className="searchIcon"
                 onClick={() => {
-                    props.updateCountry(props.country)                
+                    props.setRandomSearch(props.country)          
                 }}
                 icon="random"
                 style={{ fontSize: "1.3rem" }}
