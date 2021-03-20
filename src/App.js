@@ -272,8 +272,8 @@ function App() {
 
       headers: {
         "x-rapidapi-host": "newscatcher.p.rapidapi.com",
-        "x-rapidapi-key": process.env.REACT_APP_API_KEY,
-        /* "x-rapidapi-key": Credentials.api_key, */
+         "x-rapidapi-key": process.env.REACT_APP_API_KEY, 
+        /*"x-rapidapi-key": Credentials.api_key,*/
         useQueryString: true,
       },
     });
@@ -346,6 +346,7 @@ function App() {
         </h3>
         {/* This should be clean up */}
         <SearchBox
+          mobile={mobile}
           updateSearch={updateSearch}
           changeSearch={changeSearch}
           searchText={searchText}

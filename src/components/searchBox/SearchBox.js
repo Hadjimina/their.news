@@ -6,11 +6,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 
 function SearchBox(props) {
-
+console.log(props.mobile)
     return (
         <div className="SearchBoxWrapper">
             <FontAwesomeIcon
                 className="searchIcon"
+                style={props.mobile?{fontSize: "2rem"}:{fontSize: "1.5rem"}}    
                 onClick={() => {
                     props.setSearch(props.searchText);
                 }}
@@ -20,6 +21,7 @@ function SearchBox(props) {
                 type="text"
                 value={props.searchText}
                 className="SearchBoxInputStyle"
+                
                 onChange={(e)=>{
                     props.changeSearch(e)
                 }}
@@ -32,10 +34,11 @@ function SearchBox(props) {
             />
             <FontAwesomeIcon
                 className="searchIcon"
+                style={props.mobile?{fontSize: "2rem"}:{fontSize: "1.5rem"}}
                 onClick={() => {
                     props.setRandomSearch(props.country)          
                 }}
-                icon="random"s
+                icon="random"
             />
         </div> 
     );

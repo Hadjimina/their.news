@@ -68,9 +68,11 @@ function Story(props) {
       }}
     >
 
+
      
       {/* Show title over entire article */}
-      <h3 id="title" style={props.index>4 ?{fontSize:"1.2rem"}:{}}>
+      {/*always have space for exactly 3 linesin dexktop*/}
+      <h3 id="title" style={props.index>4 ?{fontSize:"1.2rem"}:{}, !props.mobile?{lineHeight:"2.3ex",height:"6.9ex"}:{}}>
         {props.article.title}
       </h3>
      

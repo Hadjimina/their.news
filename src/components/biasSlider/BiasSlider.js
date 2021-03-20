@@ -33,11 +33,13 @@ function BiasSlider(props) {
   }
 
   useEffect(updateSources,[]);
-
+  /* 
   const sliderLabels = props.mobile?(
     props.country === "US"?[" ", "Left", " ", " ",  "Right", " "]:["Links", " ", " ","Rechts"]):
    (props.country === "US"?["Extreme Left", "Left", "Skews Left", "Skews Right","Right", "Extreme Right"]: ["Links", "Leicht Links", "Leicht Rechts",
-   "Rechts"])
+   "Rechts"]) */
+
+  const sliderLabels = props.mobile?[" ", "Left", " ", " ",  "Right", " "]:["Extreme Left", "Left", "Skews Left", "Skews Right","Right", "Extreme Right"]
 
 
   return (
@@ -50,7 +52,7 @@ function BiasSlider(props) {
         onChange = {updateValue}
         onMouseUp = {updateSources}
         onTouchEnd = {updateSources}/>
-      {/* DISABLED EXPLANATINO */}
+      {/* DISABLED EXPLANATION */}
  {/*      <div style={{textAlign:"center", marginBottom:"0.5em"}}>
         {props.country === "CH"? "Diese Website funktioniert am besten mit  ":  "This website works best on "}
         <strong className="recommendation" onClick={()=>{props.updateCountry("US")}}> {props.country==="CH"? "amerikanischen ": "american "} </strong>

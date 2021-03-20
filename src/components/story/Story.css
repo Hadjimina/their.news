@@ -42,11 +42,10 @@
   text-overflow: ellipsis;
   /*restrict to max 3 lines*/
   -webkit-line-clamp: 3;
-
-  /*always have space for 3 lines*/
-  line-height: 2.3ex;
-  height: 6.9ex; /* 2.5ex for each visible line */
   overflow: hidden;
+
+  
+  
 }
 #article{
   overflow: hidden;
