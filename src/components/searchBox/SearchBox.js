@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 
 function SearchBox(props) {
-console.log(props.mobile)
+
     return (
         <div className="SearchBoxWrapper">
             <FontAwesomeIcon
