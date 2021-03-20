@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ReactFlagsSelect from "react-flags-select";
 import "react-flags-select/css/react-flags-select.css";
 
- import * as Credentials from "./credentials.js"; 
+/* import * as Credentials from "./credentials.js";  */
 import * as Strings from "./helpers/strings.js"
 import * as Constants from "./helpers/constants.js";
 
@@ -122,6 +122,10 @@ function App() {
   }, []);
 
   function orderArticles(articles){
+    /* swap article i=1 and i=4 b.c. i=1 more often has an image */
+    var b = articles[1];
+    articles[1] = articles[4];
+    articles[4] = b;
     console.log("article amount "+articles.length)
     // Remove duplicates
     if (!Constants.Should_remove_duplicates){
@@ -231,13 +235,14 @@ function App() {
         }
         
         setArticles(orderArticles(data.articles));
-        var tempImagesToShow = [0];
+        var tempImagesToShow = [0,2,3,4];
         /* Show images for 2nd row with probability of 66% in desktop mode*/
-        for (var t = 2; t < 4; t++) {
-          if (Math.random() < 0.66) {
-            tempImagesToShow.push(t);
-          }
+        
+        if (Math.random() < 0.66) {
+          
+          tempImagesToShow.splice(tempImagesToShow.length-1,1)
         }
+        console.log(tempImagesToShow.length)
         setImagesToShow(tempImagesToShow);
       });
     }
@@ -267,8 +272,8 @@ function App() {
 
       headers: {
         "x-rapidapi-host": "newscatcher.p.rapidapi.com",
-        /* "x-rapidapi-key": process.env.REACT_APP_API_KEY, */
-        "x-rapidapi-key": Credentials.api_key,
+        "x-rapidapi-key": process.env.REACT_APP_API_KEY,
+        /* "x-rapidapi-key": Credentials.api_key, */
         useQueryString: true,
       },
     });

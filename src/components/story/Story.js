@@ -17,18 +17,18 @@ function Story(props) {
   const siteTitleFromURL = utils.getSourceTitleByURL(
     utils.getSources(props.country)
   );
-  const verticalBorderRight = [0, 2, 3];
+  const verticalBorderRight = [0, 2, 3,5,6,7];
 
   useEffect(() => {
     setFade(true);
   }, [props.article.summary]);
 
-
+/* NOTE: THIS IS SOME OF THE UGLIEST CODE I HAVE EVER WRITTEN. PLEASE DONT JUDGE ME 😢😂 */
 
   const clampStyleSmall = {
     display: "-webkit-box",
     WebkitBoxOrient: "vertical",
-    WebkitLineClamp: 7,
+    WebkitLineClamp: 4,
     WebkitBoxPack: "end",
     textOverflow: "ellipsis",
   };
@@ -36,20 +36,19 @@ function Story(props) {
   const clampStyleBig = {
     display: "-webkit-box",
     WebkitBoxOrient: "vertical",
-    WebkitLineClamp: 12,
+    WebkitLineClamp: 11,
     WebkitBoxPack: "end",
     textOverflow: "ellipsis",
   };
 
+
   const imageStyle = {
-      objectFit: "contain",
-      height:props.index == 0?"100%": "100px",
-      width:"100%",
-      /* maxWidth: "100%",
-      maxHeight: props.index == 0?"100%":"50%", */
-      margin: "auto",
+    objectFit: "contain",
+    objectPosition: "top",
+    height: props.index == 0? "100%":"8em",
+    width:"100%",  
     
-  }
+}
 
   return (
     <div
@@ -69,11 +68,12 @@ function Story(props) {
       }}
     >
 
-      {(props.minor || props.mobile) && (
-        <h3 id="title" style={props.index>4 ?{fontSize:"1.2rem"}:{}}>
-          {props.article.title}
-        </h3>
-      )}
+     
+      {/* Show title over entire article */}
+      <h3 id="title" style={props.index>4 ?{fontSize:"1.2rem"}:{}}>
+        {props.article.title}
+      </h3>
+     
       <div
         className="textImageWrapper"
         style={
@@ -83,13 +83,6 @@ function Story(props) {
         }
       >
         <div className="text" style={props.index === 0?{marginRight:"0.5em"}:{}}>
-          {/* Title for index 0 */}
-          {!props.minor && !props.mobile && (
-            <h3 id="title" >
-              {props.article.title}
-            </h3>
-          )}
-
           {/* Show summary in all but last 4 entries */}
           {props.index < 5 &&
           /* show 14 lines if no image & 1<index<5 otw 10  */

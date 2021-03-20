@@ -35,8 +35,7 @@ function SearchBox(props) {
                 onClick={() => {
                     props.setRandomSearch(props.country)          
                 }}
-                icon="random"
-                style={{ fontSize: "1.3rem" }}
+                icon="random"s
             />
         </div> 
     );
