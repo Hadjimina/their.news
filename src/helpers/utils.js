@@ -1,8 +1,12 @@
 import * as Constants from "./constants.js"
 
 function getSourcesByBias(sources){
-
   let dictionary = Object.assign({}, ...sources.map((x) => ({[x.bias]: x})));
+  return dictionary
+}
+
+function getBiasByCleanURL(sources){
+  let dictionary = Object.assign({}, ...sources.map((x) => ({[x.link]: x.bias})));
   return dictionary
 }
 
@@ -161,4 +165,4 @@ function shuffleArray(array) {
 }
 
 export {getSourcesByBias, getSourceTitleByURL, getClosestSources, getSources, getTopics, getRandomTopic,
-   LevenshteinDistance, JaroWrinker, shuffleArray}
+   LevenshteinDistance, JaroWrinker, shuffleArray, getBiasByCleanURL}

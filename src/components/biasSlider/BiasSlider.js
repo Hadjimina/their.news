@@ -1,12 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { utils } from '../../helpers';
 import './BiasSlider.css';
 
-function BiasSlider(props) {
-  const [value, setValue] = useState(Math.floor((Math.random() * 84))-42);
+import Slider, { SliderTooltip } from 'rc-slider';
+import 'rc-slider/assets/index.css';
+
+const { createSliderWithTooltip } = Slider;
+const Range = createSliderWithTooltip(Slider.Range);
+const { Handle } = Slider;
+
+const handle = props => {
+  const { value, dragging, index, ...restProps } = props;
+  return (
+    <SliderTooltip
+      prefixCls="rc-slider-tooltip"
+      overlay={`${value} %`}
+      visible={dragging}
+      placement="top"
+      key={index}
+    >
+      <Handle value={value} {...restProps} />
+    </SliderTooltip>
+  );
+};
+
+
+const BiasSlider = forwardRef((props, ref) =>{
+  const [value, setValue] = useState(Math.floor((Math.random() * 84))-42);  
 
   const updateValue = (e) =>{
-    setValue(e.target.value)
+    setValue(e)
   }
 
   const updateSources = () => {
@@ -20,17 +43,21 @@ function BiasSlider(props) {
    props.updateSources(sources)
   }
 
-  const setExtremePosition=()=>{
-    var window = Math.floor(Math.random() * 12)
-    //Left or right?
-    if(Math.random() < 0.5){
-      //Left
-      setValue(-42+window)
-    }else{
-      setValue(42-window)
+  //useImperativeHandle used to call setExtremePosition from parent componenet
+  useImperativeHandle(ref, () => ({
+    setExtremePosition(){
+      var window = Math.floor(Math.random() * 20)
+      //Left or right?
+      if(Math.random() < 0.5){
+        //Left
+        setValue(-42+window)
+      }else{
+        setValue(42-window)
+      }
+      updateSources()
     }
-    updateSources()
-  }
+
+  }));
 
   useEffect(updateSources,[]);
   /* 
@@ -44,16 +71,21 @@ function BiasSlider(props) {
 
   return (
     <div style={{width:"100%", backgroundColor:"transparent", marginTop:"0.5em", marginBottom:"0.5em"}}>
+      {/*show props.outletDots on the slider with their label in the tooltip*/}
+      <Slider min={-42} max={42} value={value} handle={handle} onChange={updateValue} onAfterChange={updateSources} />
       <div className ="labels">
         {sliderLabels.map((label, index)=><div key={index}>{label}</div>)}
       </div>
-      <input type="range" min={-42} max={42} value={value}
+      {/* <input type="range" min={-42} max={42} value={value}
         className="slider"
         onChange = {updateValue}
         onMouseUp = {updateSources}
-        onTouchEnd = {updateSources}/>
+        onTouchEnd = {updateSources}/> */}
+
+      
+      
       {/* DISABLED EXPLANATION */}
- {/*      <div style={{textAlign:"center", marginBottom:"0.5em"}}>
+      {/*<div style={{textAlign:"center", marginBottom:"0.5em"}}>
         {props.country === "CH"? "Diese Website funktioniert am besten mit  ":  "This website works best on "}
         <strong className="recommendation" onClick={()=>{props.updateCountry("US")}}> {props.country==="CH"? "amerikanischen ": "american "} </strong>
         {props.country === "CH"? "Nachrichten und mit":  "news and with"}
@@ -62,6 +94,6 @@ function BiasSlider(props) {
       </div> */}
     </div>
   );
-}
+})
 
 export default BiasSlider;

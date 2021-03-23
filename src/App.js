@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { BiasSlider, Story, SearchBox, Info, PopupMessage } from "./components";
+import { BiasSlider, Story, SearchBox, Info, PopupMessage,  } from "./components";
 import { utils } from "./helpers";
 import "./App.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ReactFlagsSelect from "react-flags-select";
 import "react-flags-select/css/react-flags-select.css";
 
-/* import * as Credentials from "./credentials.js";  */
+ import * as Credentials from "./credentials.js";  
 import * as Strings from "./helpers/strings.js"
 import * as Constants from "./helpers/constants.js";
 
@@ -18,19 +18,22 @@ const getWidth = () =>
 
 const mobileThreshold = 800;
 
-function App() {
-  const countries = ["US", "CH"];
-  const countrySelectorRef = useRef();
 
+function App() {
   const [sources, setSources] = useState();
   const [search, setSearch] = useState();
   const [articles, setArticles] = useState();
   const [mobile, setMobile] = useState(getWidth() < mobileThreshold);
+  //country is no longer used, but we leave it in if we need it in the future
   const [country, setCountry] = useState("US");
   const [searchText, setsearchText] = useState();
-
   const [imagesToShow, setImagesToShow] = useState([]);
   const [searchedFlag, setSearchedFlag] = useState(false);
+  const [outletDots, setOutletDots] = useState({})
+  
+
+  var  searchAmount = 100; //Get 100 articles for first new search value, if only slider change get only 30
+  const childRef = useRef();
 
   const sourceUpdateHandler = (sourceFromSlider) => {
     if (!sourceFromSlider || !sources) {
@@ -39,12 +42,19 @@ function App() {
 
     if (sourceFromSlider.join(",") !== sources.join(",")) {
       setSearchedFlag(false)
-      setSources(sourceFromSlider);
+      
+      /* Temprorary thing */
+      sourceFromSlider = utils.getSources(country).map(function (x) {
+        return x.link
+      });
+
+       setSources(sourceFromSlider); 
     }
   };
 
   const updateSearch = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && searchText != search) {
+      console.log("Searched")
       setSearchedFlag(false)
       searchWrapper(searchText)
     }
@@ -64,8 +74,7 @@ function App() {
       setSearchedFlag(false) */
       return
     } 
-    console.log("setting")
-    console.log(value)
+
     setSearchedFlag(false)
     setArticles([])
     setSearch(value)
@@ -77,9 +86,9 @@ function App() {
   }
 
   function setRandomSearch(country){
-    
     var randomTopic = utils.getRandomTopic(country)
     setsearchText(randomTopic);
+    childRef.current.setExtremePosition()
     searchWrapper(randomTopic);
   }
 
@@ -104,7 +113,7 @@ function App() {
         }
       }); */
     
-    let sourceAmount =  4 ;
+    let sourceAmount =  10000 ;
     setSources(utils.getClosestSources(sourceAmount, 0, country));
     setRandomSearch(country)
 
@@ -126,7 +135,7 @@ function App() {
     var b = articles[1];
     articles[1] = articles[4];
     articles[4] = b;
-    console.log("article amount "+articles.length)
+    
     // Remove duplicates
     if (!Constants.Should_remove_duplicates){
       return articles.slice(0, Constants.Article_amount-1)
@@ -163,64 +172,11 @@ function App() {
     for( const index of indicesToRemove){
       articles.splice(index,1)
     }
-    
-    //console.log("Removed "+(oldLength-articles.length)+" items")
-
-    
-    // randomize outlets as good as possible
-    /* var outletDict = {};
-    // 1. create dictionary
-    for(const article of articles){
-      if(outletDict.hasOwnProperty(article.clean_url)){
-        var v = outletDict[article.clean_url]
-        v.push(article)
-        outletDict[article.clean_url] = v
-      }else{
-        outletDict[article.clean_url] = [article]
-      }
-    }
-    // 2. Sort based on score
-    var pointerAndMaxDict = {}
-    for(var k in outletDict){
-      pointerAndMaxDict[k] = [0,outletDict[k].length]
-      var list = outletDict[k]
-      list.sort((a, b) => (a.score < b.score) ? 1 : -1)
-      outletDict[k] = list
-    }
-    
-    // 3. create new array
-    // we show at max 10 items
-    var final = []
-    var temp = []
-    var keys = Object.keys(outletDict)
-    console.log(keys)
-    for(var i = 0; i<10; i++){
-      console.log("*******out******")
-      console.log("final "+final.join())
-      console.log("temp "+temp.join())
-
-      var curKey = keys[i % keys.length]
-      var curPointer = pointerAndMaxDict[curKey][0]
-      var curMax = pointerAndMaxDict[curKey][1]
-      console.log("curkey "+curKey)
-    
-      if(curPointer < curMax){
-        temp.push(outletDict[k][curPointer])
-        pointerAndMaxDict[curKey][0] = curPointer+1
-      }
-
-      if(temp.length == 4){
-        utils.shuffleArray(temp)
-        final.push(temp)
-        temp = []
-      }
-    }
-
-    console.log(final) */
     return articles.slice(0, Constants.Article_amount-1)
   }
 
   useEffect(() => {
+    
     if (
       search &&
       search.replace(/\s/g, "") !== "" &&
@@ -228,16 +184,38 @@ function App() {
       sources.length !== 0
     ) {
       getNews().then((data) => {
+        
         setSearchedFlag(true)
         if (!data.articles) {
           setArticles([])
           return
         }
+        // 1. Set "outlet dots" in sliders
+        // get clean urls
+        var urlSet = new Set(data.articles.map(function (x){
+          return x.clean_url
+        }))
         
+        var biasByUrl = utils.getBiasByCleanURL(utils.getSources(country))
+        console.log(Object.keys(biasByUrl).length)
+        for (const url of Object.keys(biasByUrl)){
+          if (!urlSet.has(url)){
+            //Url not in current set so we remove it
+            delete(biasByUrl[url])
+          }
+        }
+        setOutletDots(biasByUrl)
+        
+
+        
+        // 2.
+        console.log("Uniqe sites "+biasByUrl.size)
+        console.log("Articles "+data.articles.length)
         setArticles(orderArticles(data.articles));
+
+        //3. Images to show
         var tempImagesToShow = [0,2,3,4];
         /* Show images for 2nd row with probability of 66% in desktop mode*/
-        
         if (Math.random() < 0.66) {
           /* We remove some image */
           var max = tempImagesToShow.length
@@ -245,13 +223,14 @@ function App() {
           var toRemoveIndex = Math.floor(Math.random()*(max - min +1))+1
           tempImagesToShow.splice(toRemoveIndex-1,1)
         }
-        console.log(tempImagesToShow.length)
+    
         setImagesToShow(tempImagesToShow);
       });
     }
   }, [sources, search, country]);
 
   async function getNews() {
+
     setSearchedFlag(false)
     //Check that search value existst & is not empty
     var url = new URL("https://newscatcher.p.rapidapi.com/v1/search");
@@ -260,6 +239,7 @@ function App() {
       sort_by: "relevancy",
       page: "1",
       sources: sources.toString(),
+      page_size: searchAmount
     };
 
 
@@ -275,13 +255,12 @@ function App() {
 
       headers: {
         "x-rapidapi-host": "newscatcher.p.rapidapi.com",
-         "x-rapidapi-key": process.env.REACT_APP_API_KEY, 
-        /*"x-rapidapi-key": Credentials.api_key,*/
+        /* "x-rapidapi-key": process.env.REACT_APP_API_KEY, */
+        "x-rapidapi-key": Credentials.api_key,
         useQueryString: true,
       },
     });
 
-    
     return response.json();
   }
 
@@ -308,6 +287,8 @@ function App() {
 
 
 
+  
+
   return (
     <div className="wrapper">
       <h1
@@ -327,6 +308,7 @@ function App() {
       <Info
         mobile={mobile}
       />
+
 
       {/* Disabled country selection */}
       
@@ -360,10 +342,12 @@ function App() {
           setRandomSearch={setRandomSearch}
         />
         <BiasSlider
+          ref={childRef}
           mobile={mobile}
           updateSources={sourceUpdateHandler}
           country={country}
           updateCountry={setCountryAndSources}
+          outletDots={outletDots}
         />
       </div>
       <hr className="lightHR"/>
