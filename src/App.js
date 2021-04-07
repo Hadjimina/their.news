@@ -146,7 +146,7 @@ function App() {
       return articlesToShow.slice(0, Constants.Articles_to_show-1)
     }
 
-    console.time('removing duplicates')
+    
     var indicesToRemove = []
     for (var i = 0; i < articlesToShow.length; i++){
       for (var j = Constants.Should_remove_duplicates_from_first_article_of_outlet ? 0: outletAmount; j < articlesToShow.length; j++){
@@ -165,7 +165,6 @@ function App() {
       }
     }
     
-    console.timeEnd('removing duplicates')
 
     
     for( const index of indicesToRemove){
