@@ -2,6 +2,7 @@ import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'rea
 import { utils } from '../../helpers';
 import './BiasSlider.css';
 
+import * as Constants from "../../helpers/constants.js";
 import Slider, { SliderTooltip } from 'rc-slider';
 import 'rc-slider/assets/index.css';
 
@@ -9,54 +10,67 @@ const { createSliderWithTooltip } = Slider;
 const Range = createSliderWithTooltip(Slider.Range);
 const { Handle } = Slider;
 
-const handle = props => {
-  const { value, dragging, index, ...restProps } = props;
-  return (
-    <SliderTooltip
-      prefixCls="rc-slider-tooltip"
-      overlay={`${value} %`}
-      visible={dragging}
-      placement="top"
-      key={index}
-    >
-      <Handle value={value} {...restProps} />
-    </SliderTooltip>
-  );
-};
-
 
 const BiasSlider = forwardRef((props, ref) =>{
-  const [value, setValue] = useState(Math.floor((Math.random() * 84))-42);  
+  const [value, setValue] = useState(42);
+  const [marks, setMarks] = useState({})  
+  const [extrBiasFlag, setExtrBiasFlag] = useState(true)
+  
+  useEffect(()=>{
+    //Update marks on first Search or if marks is empty and outletDots contain something 
+    //(this bug happens on first ever search of page visit)
+    if(props.firstSearch || (Object.keys(marks).length == 0 && Object.keys(props.outletDots).length>0)){
+      var newMarks = Object.values(props.outletDots).reduce((o, k, i) => ({...o, [k+42]: ""}), {})
+      
+      setMarks(newMarks)
+      
+      if(extrBiasFlag && Object.keys(newMarks).length >0){
+        var markValues = Object.keys(newMarks)
+        markValues.sort(function(a, b){return a - b});
+        var window = Math.floor(Math.random() * 3)
+        if(0.5 > Math.random()){
+          //Set slider to highest value
+          setValue(markValues[markValues.length-1-window])
+        }else{
+          //Set slider to lowest value
+          setValue(markValues[window])
+        }
+        setExtrBiasFlag(false)
+      }
+    }
+    
+    //Set extreme Bias if flag is set
 
-  const updateValue = (e) =>{
-    setValue(e)
-  }
+    
+  },[extrBiasFlag,  props.firstSearch, props.outletDots])
+  
 
   const updateSources = () => {
     var i = 5
-    var sources = utils.getClosestSources(i, value, props.country)
-
-    while (sources == null) {
-      i+=1
-      sources = utils.getClosestSources(i, value, props.country)
+    //var sources = utils.getClosestSources(i, value-42, props.country)
+    var sources = utils.getSourcesInWindow(value-42, props.country, Constants.Sources_window)
+    if(false){
+      console.log("4. Closes sources ("+sources.length+")")
+      console.log(sources)
     }
-   props.updateSources(sources)
+    
+    props.updateSources(sources)
   }
 
   //useImperativeHandle used to call setExtremePosition from parent componenet
   useImperativeHandle(ref, () => ({
     setExtremePosition(){
-      var window = Math.floor(Math.random() * 20)
+      setExtrBiasFlag(true)
+      /* var window = Math.floor(Math.random() * 20)
       //Left or right?
       if(Math.random() < 0.5){
         //Left
-        setValue(-42+window)
+        setValue(0+window)
       }else{
-        setValue(42-window)
+        setValue(84-window)
       }
-      updateSources()
+      updateSources() */
     }
-
   }));
 
   useEffect(updateSources,[]);
@@ -68,11 +82,57 @@ const BiasSlider = forwardRef((props, ref) =>{
 
   const sliderLabels = props.mobile?[" ", "Left", " ", " ",  "Right", " "]:["Extreme Left", "Left", "Skews Left", "Skews Right","Right", "Extreme Right"]
 
+  //TODO resize this for mobile
+  const trackStyle={backgroundColor:Constants.Light_grey, height: "0.25em", marginTop:"0.3em"}
+  const dotStyle={backgroundColor:"white", borderColor:Constants.Light_grey, height:"1em",width:"1em", marginBottom:"-0.52em", marginLeft:"-0.25em"}
+  const handleStyle={backgroundColor:"black", borderColor:"black", marginLeft:"0.25em", height:"1.5em", width:"1.5em"}
+
+
+  const handle = (pr) => {
+    const { value, dragging, index, ...restProps } = pr;
+    
+    return (
+      <SliderTooltip
+        prefixCls="rc-slider-tooltip"
+        overlay={()=>{
+          
+          var outletDotsLinks = Object.keys(props.outletDots)
+          var sources = utils.getSourcesInWindow(value-42,"US", Constants.Sources_window)
+                            .filter(x=>outletDotsLinks.includes(x[1].link))
+          var sourcesString = sources.map(x=>x[1].name)
+          return sourcesString.join(", ")
+        }}
+        visible={dragging}
+        placement="top"
+        key={index}
+      >
+        <Handle value={value} {...restProps} />
+      </SliderTooltip>
+    );
+  };
+
 
   return (
     <div style={{width:"100%", backgroundColor:"transparent", marginTop:"0.5em", marginBottom:"0.5em"}}>
       {/*show props.outletDots on the slider with their label in the tooltip*/}
-      <Slider min={-42} max={42} value={value} handle={handle} onChange={updateValue} onAfterChange={updateSources} />
+      <Slider 
+        min={0} 
+        max={84} 
+        value={value} 
+        handle={handle} 
+        marks={marks}
+        onChange={setValue} 
+        onAfterChange={updateSources} 
+        step={null}
+        outletDots={props.outletDots}
+        minimumTrackStyle={trackStyle}
+        maximumTrackStyle={trackStyle}
+        //dot style = inner of dots to the right of current value
+        dotStyle={dotStyle}
+        //avtive dot style = inner of dots to the left of current value
+        activeDotStyle={dotStyle}
+        handleStyle={[handleStyle]}
+        />
       <div className ="labels">
         {sliderLabels.map((label, index)=><div key={index}>{label}</div>)}
       </div>

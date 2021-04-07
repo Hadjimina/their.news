@@ -20,20 +20,26 @@ const mobileThreshold = 800;
 
 
 function App() {
-  const [sources, setSources] = useState();
+  //country is no longer used, but we leave it in if we need it in the future
+  const [country, setCountry] = useState("US");
+  const [sources, setSources] = useState(utils.getSourcesCleanURL(country));
   const [search, setSearch] = useState();
   const [articles, setArticles] = useState();
   const [mobile, setMobile] = useState(getWidth() < mobileThreshold);
-  //country is no longer used, but we leave it in if we need it in the future
-  const [country, setCountry] = useState("US");
+
   const [searchText, setsearchText] = useState();
   const [imagesToShow, setImagesToShow] = useState([]);
   const [searchedFlag, setSearchedFlag] = useState(false);
   const [outletDots, setOutletDots] = useState({})
+  const [firstSearch, setFirstSearch] = useState(true)
   
-
-  var  searchAmount = 100; //Get 100 articles for first new search value, if only slider change get only 30
   const childRef = useRef();
+
+  if(false){
+    console.log("3. sources ("+sources.length+")")
+    console.log(sources)
+  }
+  
 
   const sourceUpdateHandler = (sourceFromSlider) => {
     if (!sourceFromSlider || !sources) {
@@ -42,41 +48,35 @@ function App() {
 
     if (sourceFromSlider.join(",") !== sources.join(",")) {
       setSearchedFlag(false)
-      
-      /* Temprorary thing */
-      sourceFromSlider = utils.getSources(country).map(function (x) {
-        return x.link
-      });
-
-       setSources(sourceFromSlider); 
+      setSources(sourceFromSlider); 
     }
   };
 
+  //Start search with new search word
   const updateSearch = (e) => {
     if (e.key === "Enter" && searchText != search) {
-      console.log("Searched")
+    
       setSearchedFlag(false)
       searchWrapper(searchText)
     }
   };
 
+  //Changes the search text
   const changeSearch = (e) => {
     if("target" in e){
       setsearchText(e.target.value);
     }
   };
 
+  // Do some minor checks before we actually start search
   const searchWrapper = (value) => {
     if(value == search){
-      /* Simulate search */
-      /* TODO */ 
-      /* console.log("timers")
-      setSearchedFlag(false) */
       return
     } 
 
     setSearchedFlag(false)
     setArticles([])
+    setFirstSearch(true);
     setSearch(value)
   }
 
@@ -86,9 +86,9 @@ function App() {
   }
 
   function setRandomSearch(country){
+    childRef.current.setExtremePosition()
     var randomTopic = utils.getRandomTopic(country)
     setsearchText(randomTopic);
-    childRef.current.setExtremePosition()
     searchWrapper(randomTopic);
   }
 
@@ -113,8 +113,8 @@ function App() {
         }
       }); */
     
-    let sourceAmount =  10000 ;
-    setSources(utils.getClosestSources(sourceAmount, 0, country));
+   /*   let sourceAmount =  100 ;
+     setSources(utils.getClosestSources(sourceAmount, 0, country)); */
     setRandomSearch(country)
 
     let timeoutId = null;
@@ -138,7 +138,7 @@ function App() {
     
     // Remove duplicates
     if (!Constants.Should_remove_duplicates){
-      return articles.slice(0, Constants.Article_amount-1)
+      return articles.slice(0, Constants.Articles_to_show-1)
     }
 
     var indicesToRemove = []
@@ -172,7 +172,7 @@ function App() {
     for( const index of indicesToRemove){
       articles.splice(index,1)
     }
-    return articles.slice(0, Constants.Article_amount-1)
+    return articles.slice(0, Constants.Articles_to_show-1)
   }
 
   useEffect(() => {
@@ -185,19 +185,29 @@ function App() {
     ) {
       getNews().then((data) => {
         
+        
         setSearchedFlag(true)
         if (!data.articles) {
           setArticles([])
           return
         }
+
+        
+       
         // 1. Set "outlet dots" in sliders
         // get clean urls
         var urlSet = new Set(data.articles.map(function (x){
           return x.clean_url
         }))
+
+        if(false){
+          console.log("1. Outlets: ("+urlSet.size+")")
+          console.log(urlSet)  
+        }
         
+
         var biasByUrl = utils.getBiasByCleanURL(utils.getSources(country))
-        console.log(Object.keys(biasByUrl).length)
+      
         for (const url of Object.keys(biasByUrl)){
           if (!urlSet.has(url)){
             //Url not in current set so we remove it
@@ -209,8 +219,6 @@ function App() {
 
         
         // 2.
-        console.log("Uniqe sites "+biasByUrl.size)
-        console.log("Articles "+data.articles.length)
         setArticles(orderArticles(data.articles));
 
         //3. Images to show
@@ -238,16 +246,17 @@ function App() {
       media: "True",
       sort_by: "relevancy",
       page: "1",
-      sources: sources.toString(),
-      page_size: searchAmount
+      lang:"en",
     };
 
 
     data = {
       ...data,
-      "lang":"en",
       q: search,
+      sources: firstSearch ? utils.getSourcesCleanURL(country) : sources.toString(),
+      page_size: firstSearch ? Constants.Article_amount_fst : Constants.Article_amount_nth
     };
+
 
     url.search = new URLSearchParams(data).toString();
     const response = await fetch(url, {
@@ -261,6 +270,8 @@ function App() {
       },
     });
 
+
+    setFirstSearch(false)
     return response.json();
   }
 
@@ -346,7 +357,7 @@ function App() {
           mobile={mobile}
           updateSources={sourceUpdateHandler}
           country={country}
-          updateCountry={setCountryAndSources}
+          firstSearch={firstSearch}
           outletDots={outletDots}
         />
       </div>

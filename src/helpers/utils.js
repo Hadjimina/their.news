@@ -1,5 +1,10 @@
 import * as Constants from "./constants.js"
 
+function getSourcesCleanURL(country){
+  var tmp = Constants.US_Sources
+  
+  return tmp.map(x => x.link);
+}
 function getSourcesByBias(sources){
   let dictionary = Object.assign({}, ...sources.map((x) => ({[x.bias]: x})));
   return dictionary
@@ -13,6 +18,20 @@ function getBiasByCleanURL(sources){
 function getSourceTitleByURL(sources){
   let dictionary = Object.assign({}, ...sources.map((x) => ({[x.link]: x.name})));
   return dictionary
+}
+
+function getSourcesInWindow(value, country, windowSize){
+  const sourceByBias = getSourcesByBias(getSources(country))
+  const keys = Object.keys(sourceByBias)
+  const biasDistances = keys.map(x=>Math.abs(value-x))
+  var sourcesByDistance = biasDistances.map((k, i) =>
+    (
+      [k,  sourceByBias[keys[i]]]
+    ))
+  sourcesByDistance.sort((a,b) => (a[0] > b[0]) ? 1 : ((b[0] > a[0]) ? -1 : 0));
+  var ret = sourcesByDistance.filter(x=> x[0]<windowSize)
+
+  return ret
 }
 
 function getClosestSources(n=1, value, country){
@@ -53,10 +72,6 @@ function getRandomTopic(country){
 function LevenshteinDistance(a, b){
   if(a.length == 0) return b.length; 
   if(b.length == 0) return a.length; 
-
-  console.log("comparing")
-  console.log(a)
-  console.log(b)
   var matrix = [];
 
   // increment along the first column of each row
@@ -165,4 +180,4 @@ function shuffleArray(array) {
 }
 
 export {getSourcesByBias, getSourceTitleByURL, getClosestSources, getSources, getTopics, getRandomTopic,
-   LevenshteinDistance, JaroWrinker, shuffleArray, getBiasByCleanURL}
+   LevenshteinDistance, JaroWrinker, shuffleArray, getBiasByCleanURL, getSourcesCleanURL, getSourcesInWindow}
