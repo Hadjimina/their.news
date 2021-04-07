@@ -26,7 +26,8 @@ html,#root,
 body {
   height: 100%;
   margin: 0;
-  min-width: 34.7rem
+  min-width: 34.7rem;
+  
 }
 
 a { color: inherit; } 

@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { utils } from '../../helpers';
+import React from 'react';
 import './SearchBox.css';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

@@ -23,21 +23,24 @@ function getSourceTitleByURL(sources){
 function getSourcesInWindow(value, country, windowSize){
   const sourceByBias = getSourcesByBias(getSources(country))
   const keys = Object.keys(sourceByBias)
-  const biasDistances = keys.map(x=>Math.abs(value-x))
+  const biasDistances = keys.map(x=>Math.round((Math.abs(value-x) + Number.EPSILON) * 100) / 100)
+  
+  
   var sourcesByDistance = biasDistances.map((k, i) =>
     (
       [k,  sourceByBias[keys[i]]]
     ))
+  
   sourcesByDistance.sort((a,b) => (a[0] > b[0]) ? 1 : ((b[0] > a[0]) ? -1 : 0));
   var ret = sourcesByDistance.filter(x=> x[0]<windowSize)
-
   return ret
 }
 
 function getClosestSources(n=1, value, country){
   const sourceByBias = getSourcesByBias(getSources(country))
   const keys = Object.keys(sourceByBias)
-  const biasDistances = keys.map(x=>Math.abs(value-x))
+  
+  const biasDistances = keys.map(x=>Math.round((Math.abs(value-x) + Number.EPSILON) * 100) / 100)
   var sourcesByDistance = biasDistances.map((k, i) =>
     (
       [k,  sourceByBias[keys[i]]]
@@ -70,8 +73,8 @@ function getRandomTopic(country){
 }
 
 function LevenshteinDistance(a, b){
-  if(a.length == 0) return b.length; 
-  if(b.length == 0) return a.length; 
+  if(a.length === 0) return b.length; 
+  if(b.length === 0) return a.length; 
   var matrix = [];
 
   // increment along the first column of each row
@@ -89,7 +92,7 @@ function LevenshteinDistance(a, b){
   // Fill in the rest of the matrix
   for(i = 1; i <= b.length; i++){
       for(j = 1; j <= a.length; j++){
-      if(b.charAt(i-1) == a.charAt(j-1)){
+      if(b.charAt(i-1) === a.charAt(j-1)){
           matrix[i][j] = matrix[i-1][j-1];
       } else {
           matrix[i][j] = Math.min(matrix[i-1][j-1] + 1, // substitution
@@ -102,7 +105,7 @@ function LevenshteinDistance(a, b){
 };
 
 function JaroWrinker(s1, s2) {
-
+  
   var m = 0;
 
   // Exit early if either are empty.
@@ -178,6 +181,7 @@ function shuffleArray(array) {
       [array[i], array[j]] = [array[j], array[i]];
   }
 }
+
 
 export {getSourcesByBias, getSourceTitleByURL, getClosestSources, getSources, getTopics, getRandomTopic,
    LevenshteinDistance, JaroWrinker, shuffleArray, getBiasByCleanURL, getSourcesCleanURL, getSourcesInWindow}

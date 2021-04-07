@@ -1,5 +1,3 @@
-import popupMessage from "../components/popupMessage/PopupMessage"
-
 export const TITLE = "Their News"
 export const POWERED_BY = "powered by "
 export const API_NAME = "</newscatcher>"

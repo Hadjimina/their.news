@@ -2,12 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { BiasSlider, Story, SearchBox, Info, PopupMessage,  } from "./components";
 import { utils } from "./helpers";
 import "./App.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-import ReactFlagsSelect from "react-flags-select";
 import "react-flags-select/css/react-flags-select.css";
 
- import * as Credentials from "./credentials.js";  
+//import * as Credentials from "./credentials.js";  
 import * as Strings from "./helpers/strings.js"
 import * as Constants from "./helpers/constants.js";
 
@@ -32,29 +29,27 @@ function App() {
   const [searchedFlag, setSearchedFlag] = useState(false);
   const [outletDots, setOutletDots] = useState({})
   const [firstSearch, setFirstSearch] = useState(true)
+  const [sliderLoading, setSliderLoading] = useState(false)
   
-  const childRef = useRef();
-
-  if(false){
-    console.log("3. sources ("+sources.length+")")
-    console.log(sources)
-  }
-  
+  const childRef = useRef();  
 
   const sourceUpdateHandler = (sourceFromSlider) => {
     if (!sourceFromSlider || !sources) {
       return;
     }
 
+    //Check if the news sources are different to the ones we already
     if (sourceFromSlider.join(",") !== sources.join(",")) {
       setSearchedFlag(false)
       setSources(sourceFromSlider); 
+    }else{
+      setSliderLoading(false)
     }
   };
 
   //Start search with new search word
   const updateSearch = (e) => {
-    if (e.key === "Enter" && searchText != search) {
+    if (e.key === "Enter" && searchText !== search) {
     
       setSearchedFlag(false)
       searchWrapper(searchText)
@@ -70,7 +65,7 @@ function App() {
 
   // Do some minor checks before we actually start search
   const searchWrapper = (value) => {
-    if(value == search){
+    if(value === search){
       return
     } 
 
@@ -86,7 +81,6 @@ function App() {
   }
 
   function setRandomSearch(country){
-    childRef.current.setExtremePosition()
     var randomTopic = utils.getRandomTopic(country)
     setsearchText(randomTopic);
     searchWrapper(randomTopic);
@@ -95,26 +89,6 @@ function App() {
   /* DISABLED LOCATION RECOGNITION */
   //onetime only
   useEffect(() => {
-    /* var currentCountry = null;
-    fetch("https://extreme-ip-lookup.com/json/")
-      .then((res) => res.json())
-      .then((response) => {
-        currentCountry = response.countryCode;
-      })
-      .catch((data, status) => {
-        //This is very bad...but works
-        // if(data === "TypeError: Failed to fetch"){
-        currentCountry = "US";
-        // }
-      })
-      .finally(() => {
-        if (countries.includes(currentCountry)) {
-          setCountryAndSources(currentCountry);
-        }
-      }); */
-    
-   /*   let sourceAmount =  100 ;
-     setSources(utils.getClosestSources(sourceAmount, 0, country)); */
     setRandomSearch(country)
 
     let timeoutId = null;
@@ -130,49 +104,84 @@ function App() {
     };
   }, []);
 
+
   function orderArticles(articles){
-    /* swap article i=1 and i=4 b.c. i=1 more often has an image */
-    var b = articles[1];
-    articles[1] = articles[4];
-    articles[4] = b;
+    var articlesToShow = []
     
-    // Remove duplicates
-    if (!Constants.Should_remove_duplicates){
-      return articles.slice(0, Constants.Articles_to_show-1)
+    var articlesPerOutlet = {}
+    for (var n = 0; n < articles.length; n++){
+      
+      var outlet = articles[n].clean_url
+      
+      if( outlet in articlesPerOutlet){
+        var cur = articlesPerOutlet[outlet]
+        cur.push([articles[n],n])
+        articlesPerOutlet[outlet] = cur
+      }else{
+        articlesPerOutlet[outlet] = [[articles[n],n]]
+      }
+    }
+    
+    //RoundRobin for first article of each outlet
+    var mergedArray = []
+   
+    var outletAmount = Object.keys(articlesPerOutlet).length
+
+    for(var newsSite of Object.keys(articlesPerOutlet)){
+      articlesToShow.push(articlesPerOutlet[newsSite][0][0])
+      mergedArray = mergedArray.concat(articlesPerOutlet[newsSite].slice(1))
     }
 
+    // this sort is probably unneccessary
+    mergedArray.sort((a, b)=>{return a[1] - b[1]})
+    
+    //Fil rest up by article relevance until size Articles_to_show + Articles_backup
+    var fillAmount = Math.max(Constants.Articles_to_show + Constants.Articles_backup - articlesToShow.length,0)
+    articlesToShow = articlesToShow.concat(mergedArray.slice(0,fillAmount).map(x=>x[0]))
+
+    
+
+    // Remove duplicates
+    if (!Constants.Should_remove_duplicates){
+      return articlesToShow.slice(0, Constants.Articles_to_show-1)
+    }
+
+    console.time('removing duplicates')
     var indicesToRemove = []
-    for (var i = 0; i < articles.length; i++){
-      for (var j = 0; j < articles.length; j++){
-          if(i == j || j in indicesToRemove){
+    for (var i = 0; i < articlesToShow.length; i++){
+      for (var j = Constants.Should_remove_duplicates_from_first_article_of_outlet ? 0: outletAmount; j < articlesToShow.length; j++){
+          if(i === j || j in indicesToRemove){
             continue
           }
-          // Set articles score
-          var score = 0
-          
-          // +1 for search text in title
-          if(articles[j].title.toLowerCase().includes(search.toLowerCase())){
-            score += 1.0
-          }
-          articles[j]["score"] =  score
           
           // Check similarity
           //JaronWrinker is super computationally expensive
-          var titleDistance = utils.JaroWrinker(articles[i].title, articles[j].title)
-          var summaryDistance = utils.JaroWrinker(articles[i].summary, articles[j].summary)
+          var titleDistance = utils.JaroWrinker(articlesToShow[i].title, articlesToShow[j].title)
+          var summaryDistance = utils.JaroWrinker(articlesToShow[i].summary, articlesToShow[j].summary)
 
           if(titleDistance > Constants.JaroWrinker_threshold || summaryDistance > Constants.JaroWrinker_threshold){
             indicesToRemove.push(j)
-          }
-          
+          }          
+      }
+    }
+    
+    console.timeEnd('removing duplicates')
+
+    
+    for( const index of indicesToRemove){
+      if(!Constants.Should_remove_duplicates_from_first_article_of_outlet){
+        if(index > outletAmount){ // we want to have min 1 article of each outlet, for the first article of each outlet we do not check duplicates
+          articlesToShow.splice(index,1)
+        }
+      }else{
+        articlesToShow.splice(index,1)
       }
       
     }
-    var oldLength = articles.length
-    for( const index of indicesToRemove){
-      articles.splice(index,1)
-    }
-    return articles.slice(0, Constants.Articles_to_show-1)
+
+    setFirstSearch(false)
+    setSliderLoading(false)
+    return articlesToShow.slice(0, Constants.Articles_to_show-1)
   }
 
   useEffect(() => {
@@ -185,7 +194,7 @@ function App() {
     ) {
       getNews().then((data) => {
         
-        
+
         setSearchedFlag(true)
         if (!data.articles) {
           setArticles([])
@@ -199,15 +208,8 @@ function App() {
         var urlSet = new Set(data.articles.map(function (x){
           return x.clean_url
         }))
-
-        if(false){
-          console.log("1. Outlets: ("+urlSet.size+")")
-          console.log(urlSet)  
-        }
-        
-
+  
         var biasByUrl = utils.getBiasByCleanURL(utils.getSources(country))
-      
         for (const url of Object.keys(biasByUrl)){
           if (!urlSet.has(url)){
             //Url not in current set so we remove it
@@ -258,25 +260,25 @@ function App() {
     };
 
 
+
     url.search = new URLSearchParams(data).toString();
     const response = await fetch(url, {
       method: "GET",
 
       headers: {
         "x-rapidapi-host": "newscatcher.p.rapidapi.com",
-        /* "x-rapidapi-key": process.env.REACT_APP_API_KEY, */
-        "x-rapidapi-key": Credentials.api_key,
+         "x-rapidapi-key": process.env.REACT_APP_API_KEY, 
+        /*"x-rapidapi-key": Credentials.api_key,*/
         useQueryString: true,
       },
     });
 
-
-    setFirstSearch(false)
     return response.json();
   }
 
   const getPopupMessage = (()=>{
     var ret
+
     if (searchedFlag && (!articles || articles.length <= 0)){
     /* Searched but did not find anything*/
         ret = (<PopupMessage 
@@ -284,8 +286,8 @@ function App() {
                 body = {Strings.NOTHING_FOUND_BODY}
                 icon = "question"
               />)
-    }else if(!searchedFlag && (!articles || articles.length <= 0)) {
-    /* Not yet searched. We are loading*/
+    }else if(!searchedFlag && (!articles || articles.length <= 0) || sliderLoading) {
+    /* Not yet searched or slider loading. We are loading*/
         ret = (<PopupMessage 
           title = {Strings.LOADING_TITLE}
           body =  {Strings.LOADING_BODY}
@@ -295,10 +297,6 @@ function App() {
     return ret
        
   })
-
-
-
-  
 
   return (
     <div className="wrapper">
@@ -359,12 +357,14 @@ function App() {
           country={country}
           firstSearch={firstSearch}
           outletDots={outletDots}
+          sliderLoading={(b)=>{
+            setSliderLoading(b)}}
         />
       </div>
       <hr className="lightHR"/>
 
       <div id="parent">
-        {articles &&
+        {!sliderLoading && articles &&
           articles.length > 0 &&
           articles.map((article, index) => (
             <div
@@ -377,7 +377,7 @@ function App() {
                           {flex: "1 0 100%"}
             }>
             
-              <Story
+             <Story
                 key={index}
                 article={article}
                 index={index}
@@ -385,7 +385,7 @@ function App() {
                 showImage={imagesToShow.includes(index)}
                 minor={index !== 0}
                 mobile={mobile}
-              />
+              /> 
             </div>
           ))}
 

@@ -19,6 +19,11 @@ The media bias chart from [adfontesmedia](https://www.adfontesmedia.com/download
 
 <!-- ### What do the emojis mean?
 The emojis represent a simple sentiment analysis which analyses a preview of the article and gives a score about how positive (score > 0.66), or how negative (score < 0.33) the article is. Since this is far from perfect, the emojis should be taken with a grain of salt. -->
+## Known bugs
+These bugs do not break the website, but might impact the experience slightly
+
+1. The outlet list above the slider does not show all outlets of a given political position and search time. 
+2. The articles from the first search of a new topic disregard the bias slider
 
 ## Support me
 

@@ -43,13 +43,12 @@
   /*restrict to max 3 lines*/
   -webkit-line-clamp: 3;
   overflow: hidden;
-
-  
-  
 }
+
 #article{
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 1.1em
 }
 
 .text{
@@ -68,8 +67,9 @@
 }
 
 .fade {
-  animation: fade-in-keyframes 3s;
+  animation: fade-in-keyframes 1s;
 }
+
 @keyframes fade-in-keyframes {
   from {opacity: 0}
   to {opacity: 1}

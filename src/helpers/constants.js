@@ -11,16 +11,21 @@ export const CH_Sources = [{'name': 'SRF', 'link': 'srf.ch', 'bias': 0.152, 'rel
 
 
 export const CH_Topics =["Bildungswesen","Corona", "Covid", "EU", "Brexit", "Wirtschaft", "Trump", "Biden", "Klimaschutz", "Terror", "Impfung"]
-export const US_Topics =["Trump", "Biden", "Corona", /*"Covid", "Abortion", "Gun control", "Vaccines", "Capitalism", "Climate change", "Immigration", "Transgender", "White supremacy", "Black Lives Matter", "QAnon", "Stimulus"*/]
+export const US_Topics =["Trump", "Biden", "Corona", "Covid", "Abortion", "Gun control", "Vaccines", "Capitalism", "Climate change", "Immigration", "Transgender", "White supremacy", "Black Lives Matter", "QAnon", "Stimulus"]
 
 export const Loading_key = "loading"
 
 export const JaroWrinker_threshold = 0.88
 
-export const Should_remove_duplicates = false
+export const Should_remove_duplicates = true
+//Jup at this point I just gave up
+export const Should_remove_duplicates_from_first_article_of_outlet = false
+
 export const Article_amount_fst = 100
 export const Article_amount_nth = 100 //This should be 10 in the end
 export const Articles_to_show = 10
-export const Sources_window = 1
+export const Articles_backup = 10
+export const Sources_window = 1.5
+export const Sources_window_mobile = 5
 //Colors
 export const Light_grey = "#dfe1e5"

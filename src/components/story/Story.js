@@ -3,7 +3,7 @@ import "./Story.css";
 import Moment from "react-moment";
 import "moment-timezone";
 import { utils } from "../../helpers";
-import * as Constants from "../../helpers/constants.js";
+
 
 function Story(props) {
   const openLink = (link) => {
@@ -21,7 +21,7 @@ function Story(props) {
 
   useEffect(() => {
     setFade(true);
-  }, [props.article.summary]);
+  }, [props.article.title]);
 
 /* NOTE: THIS IS SOME OF THE UGLIEST CODE I HAVE EVER WRITTEN. PLEASE DONT JUDGE ME 😢😂 */
 
@@ -41,11 +41,19 @@ function Story(props) {
     textOverflow: "ellipsis",
   };
 
+  const clampStyleBigMobile = {
+    display: "-webkit-box",
+    WebkitBoxOrient: "vertical",
+    WebkitLineClamp: 12,
+    WebkitBoxPack: "end",
+    textOverflow: "ellipsis",
+
+  };
 
   const imageStyle = {
     objectFit: "contain",
     objectPosition: "top",
-    height: props.index == 0? "100%":"8em",
+    height: props.index === 0? "100%":"8em",
     width:"100%",  
     
 }
@@ -72,7 +80,7 @@ function Story(props) {
      
       {/* Show title over entire article */}
       {/*always have space for exactly 3 linesin dexktop*/}
-      <h3 id="title" style={props.index>4 ?{fontSize:"1.2rem"}:{}, !props.mobile?{lineHeight:"2.3ex",height:"6.9ex"}:{}}>
+      <h3 id="title" style={props.index > 4 ?{fontSize:"1.2rem"}:{}, !props.mobile?{lineHeight:"2.3ex",height:"6.9ex"}:{}}>
         {props.article.title}
       </h3>
      
@@ -90,7 +98,7 @@ function Story(props) {
           /* show 14 lines if no image & 1<index<5 otw 10  */
             <p id="article" 
               style={props.mobile ? 
-                        {clampStyleBig} : 
+                        {clampStyleBigMobile} : 
                         1< props.index&& !props.showImage ? 
                           clampStyleBig: props.index < 2? clampStyleBig: clampStyleSmall}>
             {props.article.summary}
