@@ -92,7 +92,7 @@ function App() {
     let timeoutId = null;
     const resizeListener = () => {
       clearTimeout(timeoutId);
-      console.log(getWidth())
+    
       timeoutId = setTimeout(() => setMobile(getWidth() < Constants.Mobile_threshold), 0);
     };
     // set resize listener
