@@ -16,8 +16,8 @@ export const US_Topics =["Trump", "Biden", "Corona", "Covid", "Abortion", "Gun c
 export const Loading_key = "loading"
 
 export const JaroWrinker_threshold = 0.88
-
 export const Should_remove_duplicates = true
+
 //Jup at this point I just gave up
 export const Should_remove_duplicates_from_first_article_of_outlet = false
 
@@ -27,5 +27,8 @@ export const Articles_to_show = 10
 export const Articles_backup = 10
 export const Sources_window = 1.5
 export const Sources_window_mobile = 5
+
 //Colors
 export const Light_grey = "#dfe1e5"
+
+export const Mobile_threshold = 700;

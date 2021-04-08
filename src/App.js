@@ -13,8 +13,6 @@ const getWidth = () =>
   document.documentElement.clientWidth ||
   document.body.clientWidth;
 
-const mobileThreshold = 800;
-
 
 function App() {
   //country is no longer used, but we leave it in if we need it in the future
@@ -22,7 +20,7 @@ function App() {
   const [sources, setSources] = useState(utils.getSourcesCleanURL(country));
   const [search, setSearch] = useState();
   const [articles, setArticles] = useState();
-  const [mobile, setMobile] = useState(getWidth() < mobileThreshold);
+  const [mobile, setMobile] = useState(getWidth() < Constants.Mobile_threshold);
 
   const [searchText, setsearchText] = useState();
   const [imagesToShow, setImagesToShow] = useState([]);
@@ -94,7 +92,8 @@ function App() {
     let timeoutId = null;
     const resizeListener = () => {
       clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => setMobile(getWidth() < mobileThreshold), 0);
+      console.log(getWidth())
+      timeoutId = setTimeout(() => setMobile(getWidth() < Constants.Mobile_threshold), 0);
     };
     // set resize listener
     window.addEventListener("resize", resizeListener);
