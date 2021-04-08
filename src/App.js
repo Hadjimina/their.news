@@ -48,9 +48,13 @@ function App() {
   //Start search with new search word
   const updateSearch = (e) => {
     if (e.key === "Enter" && searchText !== search) {
-    
-      setSearchedFlag(false)
-      searchWrapper(searchText)
+      var searchNoWhitespace = searchText.replace(/\s/g, "")
+      if(searchNoWhitespace == ""){
+        setRandomSearch(country)
+      }else{
+        setSearchedFlag(false)
+        searchWrapper(searchText)
+      }
     }
   };
 

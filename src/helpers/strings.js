@@ -1,7 +1,7 @@
 export const TITLE = "Their News"
 export const POWERED_BY = "powered by "
 export const API_NAME = "</newscatcher>"
-export const CTA = "Choose a political bias for your news"
+export const CTA = "Pick a political bias"
 
 
 /* popupMessages content */
