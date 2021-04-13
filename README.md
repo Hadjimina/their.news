@@ -10,9 +10,7 @@ The Goal of this project is to build a website where you can find news that chal
 
 ### Accessible at [their.news](https://their.news)
 
-In order to achieve this goal, a website will be built which, first detects roughly your existing political standing and then presents you with news articles from the other side of the spectrum.
-These articles can be searched and you can freely choose if you want to see news from a more politically left or right sided view.
-The media bias chart from [adfontesmedia](https://www.adfontesmedia.com/download-the-media-bias-chart/) will be used to categorise the different websites for the US.
+The website uses the media bias rankings from [adfontesmedia](https://www.adfontesmedia.com/download-the-media-bias-chart/) as well as a news api by [</ newscatcher >](https://newscatcherapi.com/). You are presented with a slider with a few dots. Each dot represents a news outlet (e.g. Reuters, Forbes etc). The news articles shown below the slider always come from newsoulets close the slider. It's super interesting to see how news from the left and news from the right report the same events differently.
 
 | Media Chart USA | 
 | :------------- | 
